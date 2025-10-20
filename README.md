@@ -1,0 +1,1 @@
+This is the Scripts repository for Dungeon Decimators, a game inspired by Binding of Isaac. You kill enemies to get materials, find loot, craft new equipment to take on the dungeons and progress, etc. 
