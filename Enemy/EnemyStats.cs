@@ -18,17 +18,18 @@ public class EnemyStats : MonoBehaviour
     StatCollection stats = new StatCollection();
 
     public float baseHealth = 50f;
+    public float currentHealth = 50f;
     public float baseDamage = 15f;
     public float baseDefense = 3f;
     public float baseMovementSpeed = 4f;
     public float attackSpeed = 1f; // used for ranged enemies
 
     public EnemyAttribute enemyAttribute = EnemyAttribute.None;
-    public float fireWeaknessStat = 0f;
-    public float waterWeaknessStat = 0f;
-    public float windWeaknessStat = 0f;
-    public float darknessWeaknessStat = 0f;
-    public float lightWeaknessStat = 0f;
+    public float fireWeaknessStat = 1f;
+    public float waterWeaknessStat = 1f;
+    public float windWeaknessStat = 1f;
+    public float darknessWeaknessStat = 1f;
+    public float lightWeaknessStat = 1f;
     public float fireDamageStat = 0f;
     public float waterDamageStat = 0f;
     public float windDamageStat = 0f;
@@ -37,6 +38,7 @@ public class EnemyStats : MonoBehaviour
     void Start()
     {
         SetupEnemyStats();
+        currentHealth = baseHealth;
     }
     void SetupEnemyStats()
     {

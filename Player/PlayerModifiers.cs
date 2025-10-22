@@ -9,7 +9,7 @@ public class PlayerModifiers : MonoBehaviour
     public float healthModifier = 1;
     public float defenseModifier = 1;
     public float projSizeModifier = 1;
-    public float attackSpeedModifier = 1;
+    public float attackSpeedModifier = 0;
     
 
     public void ResetModifiers() // called at start of new run
@@ -20,35 +20,35 @@ public class PlayerModifiers : MonoBehaviour
         healthModifier = 1;
         defenseModifier = 1;
         projSizeModifier = 1;
-        attackSpeedModifier = 1;
+        attackSpeedModifier = 0;
     }
     public void SetQuantity(int qty)
     {
-        quantity = qty;
+        quantity = quantity + qty;
     }
     public void SetSpeedModifier(float speedMod)
     {
-        speedModifier = speedMod;
+        speedModifier = speedModifier + speedMod;
     }
     public void SetDamageModifier(float damageMod)
     {
-        damageModifier = damageMod;
+        damageModifier = damageModifier + damageMod;
     }
     public void SetProjSizeModifier(float sizeMod)
     {
-        projSizeModifier = sizeMod;
+        projSizeModifier = projSizeModifier + sizeMod;
     }
     public void SetHealthModifier(float healthMod)
     {
-        healthModifier = healthMod;
+        healthModifier = healthModifier + healthMod;
     }
     public void SetDefenseModifier(float defMod)
     {
-        defenseModifier = defMod;
+        defenseModifier = defenseModifier + defMod;
     }
     public void SetAttackSpeedModifier(float attackSpeedMod)
     {
-        attackSpeedModifier = attackSpeedMod;
+        attackSpeedModifier = attackSpeedModifier + attackSpeedMod;
     }
 
     public int GetQuantity()

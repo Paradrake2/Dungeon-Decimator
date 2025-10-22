@@ -21,7 +21,7 @@ public class Player : MonoBehaviour
 
     public void UpdateHealth()
     {
-        playerHealth = stats.stats.GetStat(stats.GetStatValue("Health").ToString());
+        playerHealth = stats.GetStatValue("Health");
         // Update any UI elements or other game logic related to health here
     }
 

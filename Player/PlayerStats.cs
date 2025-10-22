@@ -11,7 +11,7 @@ public class PlayerStats : MonoBehaviour
     public float baseXpGain = 0;
     public float baseMovementSpeed = 5f;
     public float baseAttackSpeed = 1f;
-
+    public int baseLevel = 1;
     void Start()
     {
         SetupPlayerStats();
@@ -35,6 +35,7 @@ public class PlayerStats : MonoBehaviour
         StatType lightAttackStat = db.GetStat("LightAttributeDamage");
         StatType attackSpeedStat = db.GetStat("AttackSpeed");
         StatType attackSpeedModifierStat = db.GetStat("AttackSpeedModifier");
+        StatType levelStat = db.GetStat("Level");
 
 
 
@@ -53,6 +54,7 @@ public class PlayerStats : MonoBehaviour
         stats.SetStat(darknessAttackStat, 0f);
         stats.SetStat(lightAttackStat, 0f);
         stats.SetStat(attackSpeedModifierStat, 0f); // this will be impacted by equipment and buff items
+        stats.SetStat(levelStat, baseLevel);
 
         // Add equipment stats
         StatCollection equipmentStats = EquipmentManager.Instance.CalculateEquipmentStats();
@@ -128,6 +130,7 @@ public class PlayerStats : MonoBehaviour
         StatType attackSpeedStat = StatDatabase.Instance.GetStat("AttackSpeed");
         float speed = stats.GetStat(attackSpeedStat);
         StatType attackSpeedModifierStat = StatDatabase.Instance.GetStat("AttackSpeedModifier");
-        return speed;
+        float finalSpeed = speed * (1 + stats.GetStat(attackSpeedModifierStat));
+        return finalSpeed;
     }
 }

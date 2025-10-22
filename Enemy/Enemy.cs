@@ -10,7 +10,9 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        // Implement damage logic here
+        float finalDamage = damage - stats.baseDefense;
+        if (finalDamage < 0) finalDamage = 0;
+        stats.currentHealth -= finalDamage;
     }
 
     public void Die()

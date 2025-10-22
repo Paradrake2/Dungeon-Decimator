@@ -64,7 +64,7 @@ public class StatCollection
     {
         stats.RemoveAll(s => s.StatType == statType);
     }
-    
+
     /// <summary>
     /// Add another stat collection to this one
     /// </summary>
@@ -78,6 +78,12 @@ public class StatCollection
                 SetStat(stat.StatType, currentValue + stat.Value);
             }
         }
+    }
+    
+    public StatType GetStatTypeByName(string statName)
+    {
+        var stat = stats.FirstOrDefault(s => s.StatType != null && s.StatType.name == statName);
+        return stat?.StatType;
     }
     
     /// <summary>
