@@ -2,7 +2,28 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public PlayerStats stats;
+    public float playerHealth;
+    public void TakeDamage(float damage)
+    {
+        UpdateHealth();
+        playerHealth -= damage;
+        if (playerHealth <= 0)
+        {
+            Die();
+        }
+        // Implement damage logic here
+    }
+    public void Die()
+    {
+        // Implement death logic here
+    }
+
+    public void UpdateHealth()
+    {
+        playerHealth = stats.stats.GetStat(stats.GetStatValue("Health").ToString());
+        // Update any UI elements or other game logic related to health here
+    }
     void Start()
     {
         

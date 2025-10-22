@@ -65,6 +65,16 @@ public class PlayerStats : MonoBehaviour
 
     void Update()
     {
-        
+
+    }
+    
+    public float GetStatValue(string statID)
+    {
+        StatType statType = StatDatabase.Instance.GetStat(statID);
+        if (statType != null)
+        {
+            return stats.GetStat(statType);
+        }
+        return 0f;
     }
 }
