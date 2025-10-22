@@ -7,7 +7,7 @@ public class NodeGrid : MonoBehaviour
     public Vector2 gridWorldSize;
     public float nodeRadius;
     Node[,] grid;
-
+    public Transform player;
     private float nodeDiameter;
     private int gridSizeX, gridSizeY;
 
@@ -22,14 +22,14 @@ public class NodeGrid : MonoBehaviour
     void CreateGrid()
     {
         grid = new Node[gridSizeX, gridSizeY];
-        Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.forward * gridWorldSize.y / 2;
+        Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.up * gridWorldSize.y / 2;
 
         for (int x = 0; x < gridSizeX; x++)
         {
             for (int y = 0; y < gridSizeY; y++)
             {
-                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
-                bool walkable = !(Physics.CheckSphere(worldPoint, nodeRadius, unwalkableMask));
+                Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.up * (y * nodeDiameter + nodeRadius);
+                bool walkable = !Physics2D.OverlapArea(worldPoint - Vector3.one * nodeRadius, worldPoint + Vector3.one * nodeRadius, unwalkableMask);
                 grid[x, y] = new Node(walkable, worldPoint, x, y);
             }
         }
@@ -64,7 +64,7 @@ public class NodeGrid : MonoBehaviour
     public Node NodeFromWorldPoint(Vector3 worldPosition)
     {
         float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
-        float percentY = (worldPosition.z + gridWorldSize.y / 2) / gridWorldSize.y;
+        float percentY = (worldPosition.y + gridWorldSize.y / 2) / gridWorldSize.y;
         percentX = Mathf.Clamp01(percentX);
         percentY = Mathf.Clamp01(percentY);
 
@@ -74,10 +74,10 @@ public class NodeGrid : MonoBehaviour
     }
 
     public List<Node> path;
-    /*
+    
     void OnDrawGizmos()
     {
-        Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
+        Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, gridWorldSize.y));
         
         if (grid != null)
         {
@@ -96,5 +96,5 @@ public class NodeGrid : MonoBehaviour
             }
         }
     }
-    */
+    
 }

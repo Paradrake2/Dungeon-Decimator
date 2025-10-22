@@ -4,7 +4,7 @@ public class Player : MonoBehaviour
 {
     public PlayerStats stats;
     public float playerHealth;
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, AttributeDamage[] attributeDamages)
     {
         UpdateHealth();
         playerHealth -= damage;
@@ -23,6 +23,11 @@ public class Player : MonoBehaviour
     {
         playerHealth = stats.stats.GetStat(stats.GetStatValue("Health").ToString());
         // Update any UI elements or other game logic related to health here
+    }
+
+    public void GetAttributeResistances()
+    {
+        // Implement logic to get attribute resistances from stats
     }
     void Start()
     {

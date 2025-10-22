@@ -1,18 +1,19 @@
+using System.Collections;
 using UnityEngine;
 
 public class BasicMeleeAI : EnemyAI
 {
-    public Transform player;
-    public EnemyStats stats;
-    public override void Attack()
+    //public Transform player;
+    
+    public override IEnumerator Attack()
     {
         // Implement melee attack logic here
+        yield return null;
     }
 
     public override void Movement()
     {
-        Vector3 direction = (player.position - transform.position).normalized;
-        transform.position += direction * stats.baseMovementSpeed * Time.deltaTime;
+        BaseMovement();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -22,9 +23,4 @@ public class BasicMeleeAI : EnemyAI
         stats = GetComponent<EnemyStats>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        Movement();
-    }
 }
