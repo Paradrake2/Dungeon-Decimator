@@ -1,6 +1,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class AttributeResistance
+{
+    public StatType attribute;
+    public StatType attributeAttack;
+    public float resistanceValue;
+}
+
 public class PlayerStats : MonoBehaviour
 {
     [Header("Player Stats")]
@@ -12,6 +20,8 @@ public class PlayerStats : MonoBehaviour
     public float baseMovementSpeed = 5f;
     public float baseAttackSpeed = 1f;
     public int baseLevel = 1;
+    public List<AttributeResistance> attributeResistances = new List<AttributeResistance>();
+
     void Start()
     {
         SetupPlayerStats();
@@ -36,6 +46,11 @@ public class PlayerStats : MonoBehaviour
         StatType attackSpeedStat = db.GetStat("AttackSpeed");
         StatType attackSpeedModifierStat = db.GetStat("AttackSpeedModifier");
         StatType levelStat = db.GetStat("Level");
+        StatType fireResistanceStat = db.GetStat("FireAttributeDefense");
+        StatType waterResistanceStat = db.GetStat("WaterAttributeDefense");
+        StatType windResistanceStat = db.GetStat("WindAttributeDefense");
+        StatType darknessResistanceStat = db.GetStat("DarknessAttributeDefense");
+        StatType lightResistanceStat = db.GetStat("LightAttributeDefense");
 
 
 
@@ -55,6 +70,11 @@ public class PlayerStats : MonoBehaviour
         stats.SetStat(lightAttackStat, 0f);
         stats.SetStat(attackSpeedModifierStat, 0f); // this will be impacted by equipment and buff items
         stats.SetStat(levelStat, baseLevel);
+        stats.SetStat(fireResistanceStat, 0f);
+        stats.SetStat(waterResistanceStat, 0f);
+        stats.SetStat(windResistanceStat, 0f);
+        stats.SetStat(darknessResistanceStat, 0f);
+        stats.SetStat(lightResistanceStat, 0f);
 
         // Add equipment stats
         StatCollection equipmentStats = EquipmentManager.Instance.CalculateEquipmentStats();
@@ -74,6 +94,7 @@ public class PlayerStats : MonoBehaviour
         stats.SetStat(damageStat, damageAfterMult);
         float defenseAfterMult = stats.GetStat(defenseStat) * (1 + stats.GetStat(db.GetStat("DefenseMult")));
         stats.SetStat(defenseStat, defenseAfterMult);
+        SetAttributeResistance();
     }
     public void UpdatePlayerStat(StatType statType, float value)
     {
@@ -91,7 +112,7 @@ public class PlayerStats : MonoBehaviour
         float modifiedHealth = stats.GetStat(healthStat) * modifiers.healthModifier;
         stats.SetStat(healthStat, modifiedHealth);
         StatType damageStat = StatDatabase.Instance.GetStat("Damage");
-        float modifiedDamage = stats.GetStat(damageStat) *  modifiers.damageModifier;
+        float modifiedDamage = stats.GetStat(damageStat) * modifiers.damageModifier;
         stats.SetStat(damageStat, modifiedDamage);
         StatType defenseStat = StatDatabase.Instance.GetStat("Defense");
         float modifiedDefense = stats.GetStat(defenseStat) * modifiers.defenseModifier;
@@ -100,7 +121,60 @@ public class PlayerStats : MonoBehaviour
         float modifiedSpeed = stats.GetStat(movementSpeedStat) * modifiers.speedModifier;
         stats.SetStat(movementSpeedStat, modifiedSpeed);
     }
+    public void SetAttributeResistance()
+    {
+        attributeResistances.Clear();
+        StatDatabase db = StatDatabase.Instance;
+        StatType fireResistanceStat = db.GetStat("FireAttributeDefense");
+        StatType waterResistanceStat = db.GetStat("WaterAttributeDefense");
+        StatType windResistanceStat = db.GetStat("WindAttributeDefense");
+        StatType darknessResistanceStat = db.GetStat("DarknessAttributeDefense");
+        StatType lightResistanceStat = db.GetStat("LightAttributeDefense");
 
+        AttributeResistance fireRes = new AttributeResistance
+        {
+            attribute = db.GetStat("FireAttributeDefense"),
+            attributeAttack = db.GetStat("FireAttributeDamage"),
+            resistanceValue = stats.GetStat(fireResistanceStat)
+        };
+        attributeResistances.Add(fireRes);
+
+        AttributeResistance waterRes = new AttributeResistance
+        {
+            attribute = db.GetStat("WaterAttributeDefense"),
+            attributeAttack = db.GetStat("WaterAttributeDamage"),
+            resistanceValue = stats.GetStat(waterResistanceStat)
+        };
+        attributeResistances.Add(waterRes);
+
+        AttributeResistance windRes = new AttributeResistance
+        {
+            attribute = db.GetStat("WindAttributeDefense"),
+            attributeAttack = db.GetStat("WindAttributeDamage"),
+            resistanceValue = stats.GetStat(windResistanceStat)
+        };
+        attributeResistances.Add(windRes);
+
+        AttributeResistance darknessRes = new AttributeResistance
+        {
+            attribute = db.GetStat("DarknessAttributeDefense"),
+            attributeAttack = db.GetStat("DarknessAttributeDamage"),
+            resistanceValue = stats.GetStat(darknessResistanceStat)
+        };
+        attributeResistances.Add(darknessRes);
+
+        AttributeResistance lightRes = new AttributeResistance
+        {
+            attribute = db.GetStat("LightAttributeDefense"),
+            attributeAttack = db.GetStat("LightAttributeDamage"),
+            resistanceValue = stats.GetStat(lightResistanceStat)
+        };
+        attributeResistances.Add(lightRes);
+    }
+    public List<AttributeResistance> GetAttributeResistances()
+    {
+        return attributeResistances;
+    }
     void Update()
     {
 
@@ -124,7 +198,7 @@ public class PlayerStats : MonoBehaviour
             stats.SetStat(statType, value);
         }
     }
-    
+
     public float GetAttackSpeed()
     {
         StatType attackSpeedStat = StatDatabase.Instance.GetStat("AttackSpeed");

@@ -31,11 +31,13 @@ public enum MaterialAttributes
     Earth,
     Air
 }
+[System.Serializable]
 public class MaterialAttributeStats
 {
     public MaterialAttributes attribute;
     public float valueMult;
 }
+[System.Serializable]
 public class MaterialStats
 {
     public float tier;

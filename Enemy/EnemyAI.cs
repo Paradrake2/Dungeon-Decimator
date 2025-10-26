@@ -17,16 +17,19 @@ public abstract class EnemyAI : MonoBehaviour
     [Header("Debug")]
     public bool drawPath = false;
 
-    bool usePathfinding = false;
-    private Vector3[] currentPath;
-    private int currentPathIndex;
-    private float lastPathfindingTime = 0f;
-    private bool isAttacking = false;
+    public bool usePathfinding = false;
+    public Vector3[] currentPath;
+    public int currentPathIndex;
+    public float lastPathfindingTime = 0f;
+    public bool isAttacking = false;
 
     [Header("Anti-Oscillation")]
     public float directionChangeDelay = 0.2f;
     private Vector3 lastMoveDirection;
     private float lastDirectionChangeTime;
+
+    [Header("Animation")]
+    public Animator animator;
     void Start()
     {
         stats = GetComponent<EnemyStats>();
@@ -51,7 +54,7 @@ public abstract class EnemyAI : MonoBehaviour
             StartCoroutine(AttackCooldownCoroutine());
         }
     }
-    IEnumerator AttackCooldownCoroutine()
+    public IEnumerator AttackCooldownCoroutine()
     {
         yield return new WaitForSeconds(attackCooldown);
         isAttacking = false;
@@ -65,7 +68,7 @@ public abstract class EnemyAI : MonoBehaviour
             RequestNewPath();
         }
     }
-    void MoveDirectlyTowardsPlayer()
+    public void MoveDirectlyTowardsPlayer()
     {
         Vector3 newDirection = (player.position - transform.position).normalized;
     
@@ -78,7 +81,7 @@ public abstract class EnemyAI : MonoBehaviour
         transform.position += lastMoveDirection * stats.baseMovementSpeed * Time.deltaTime;
     }
 
-    void RequestNewPath()
+    public void RequestNewPath()
     {
         PathRequestManager.RequestPath(transform.position, player.position, OnPathFound);
         Debug.Log("Path requested");
@@ -97,7 +100,7 @@ public abstract class EnemyAI : MonoBehaviour
             usePathfinding = false;
         }
     }
-    void FollowPath()
+    public void FollowPath()
     {
         if (currentPath == null || currentPathIndex >= currentPath.Length) return;
 
