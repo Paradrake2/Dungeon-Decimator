@@ -4,4 +4,5 @@ using UnityEngine;
 public class CraftingMaterialTag : ScriptableObject
 {
     public string tagName;
+    public Sprite icon;
 }

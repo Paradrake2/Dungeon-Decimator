@@ -16,6 +16,11 @@ public class MaterialButton : MonoBehaviour
         transform.SetParent(parent);
         // Initialize the button with the material details
     }
+
+    public void OnClick()
+    {
+        
+    }
     void Start()
     {
         

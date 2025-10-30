@@ -40,7 +40,6 @@ public class Combat : MonoBehaviour
             if (Input.GetKeyDown(attackKey))
             {
                 // Perform attack logic here
-                Debug.Log("Player attacked!");
                 FireProjectile();
                 // Wait for the cooldown duration before allowing the next attack
                 yield return new WaitForSeconds(attackCooldown);

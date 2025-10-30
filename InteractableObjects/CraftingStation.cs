@@ -1,13 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public enum CraftingStationType
-{
-    EquipmentCrafter,
-    MaterialCrafter,
-    Both
-}
 
 
 public class CraftingStation : MonoBehaviour
@@ -20,8 +13,16 @@ public class CraftingStation : MonoBehaviour
     {
         OpenCraftingUI();
     }
+    void FindUI()
+    {
+        if (craftingUI == null)
+        {
+            craftingUI = Resources.Load<GameObject>("Prefabs/UI/CraftingUI");
+        }
+    }
     public void OpenCraftingUI()
     {
+        FindUI();
         Canvas canvas = FindFirstObjectByType<Canvas>();
         GameObject ui = Instantiate(craftingUI, canvas.transform);
         ui.GetComponent<CraftingUI>().Initialize(this);

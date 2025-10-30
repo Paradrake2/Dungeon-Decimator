@@ -9,11 +9,11 @@ public class EquipmentIngredient
 
 
 [CreateAssetMenu(fileName = "EquipmentRecipe", menuName = "Scriptable Objects/EquipmentRecipe")]
-public class EquipmentRecipe : ScriptableObject
+public class EquipmentRecipe : BaseRecipe
 {
     public EquipmentType equipmentType;
     public EquipmentIngredient[] ingredients;
     public float tier;
-    public int levelRequirement = 1;
+    
 
 }
