@@ -75,6 +75,7 @@ public class NodeGrid : MonoBehaviour
 
     public List<Node> path;
     
+    /**
     void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, gridWorldSize.y));
@@ -96,5 +97,5 @@ public class NodeGrid : MonoBehaviour
             }
         }
     }
-    
+    **/
 }

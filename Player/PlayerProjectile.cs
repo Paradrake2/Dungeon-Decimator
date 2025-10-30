@@ -51,17 +51,14 @@ public class PlayerProjectile : MonoBehaviour
     {
         if (attributeValue == 0) return; // Skip if no damage
 
-        // Check if this attribute already exists in the projectile
         AttributeDamage existing = damageAttributes.Find(attr => attr.attributeType.name == attributeName);
 
         if (existing != null)
         {
-            // Attribute exists - add to existing value
             existing.damageAmount += attributeValue;
         }
         else
         {
-            // Attribute doesn't exist - create new one
             StatType statType = stats.stats.GetStatTypeByName(attributeName);
             if (statType != null)
             {
@@ -91,8 +88,8 @@ public class PlayerProjectile : MonoBehaviour
                 enemy.TakeDamage(damage);
                 Debug.Log("Enemy hit for " + damage + " damage!");
             }
+            Destroy(gameObject);
         }
-        Destroy(gameObject);
     }
 
     float CalculateDamage(EnemyStats stats, float damage)

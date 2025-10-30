@@ -9,7 +9,7 @@ public abstract class EnemyProjectile : MonoBehaviour
     public bool destroyOnImpact = true;
     public float damage;
     public List<AttributeDamage> attributeDamages = new List<AttributeDamage>();
-    public void Initialize(EnemyStats stats, EnemyProjectileData data, Vector3 direction)
+    public virtual void Initialize(EnemyStats stats, EnemyProjectileData data, Vector3 direction)
     {
         damage = projectileData.damage + stats.baseDamage;
         float speed = data.speed;
@@ -17,7 +17,7 @@ public abstract class EnemyProjectile : MonoBehaviour
         float size = data.size;
         if (data.animator != null)
         {
-            this.animator = data.animator;
+            animator = data.animator;
             Animation();
         }
         Rigidbody2D rb = GetComponent<Rigidbody2D>();

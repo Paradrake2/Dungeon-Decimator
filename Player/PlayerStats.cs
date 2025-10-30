@@ -17,7 +17,7 @@ public class PlayerStats : MonoBehaviour
     public float baseDamage = 10f;
     public float baseDefense = 5f;
     public float baseXpGain = 0;
-    public float baseMovementSpeed = 5f;
+    public float baseMovementSpeed = 0f;
     public float baseAttackSpeed = 1f;
     public int baseLevel = 1;
     public List<AttributeResistance> attributeResistances = new List<AttributeResistance>();

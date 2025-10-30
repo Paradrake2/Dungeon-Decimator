@@ -11,8 +11,8 @@ public abstract class EnemyAI : MonoBehaviour
     public float stoppingDistance = 0f;
 
     public float attackRange = 0f;
-    float attackCooldown = 1f;
-    float lastAttackTime = 0f;
+    [SerializeField] float attackCooldown = 1f;
+    //float lastAttackTime = 0f;
 
     [Header("Debug")]
     public bool drawPath = false;
@@ -37,7 +37,7 @@ public abstract class EnemyAI : MonoBehaviour
         obstacleLayer = LayerMask.GetMask("Obstacle");
     }
 
-    void Update()
+    public virtual void Update()
     {
         if (Time.time - lastPathfindingTime > pathfindingUpdateInterval)
         {
@@ -46,13 +46,7 @@ public abstract class EnemyAI : MonoBehaviour
         }
 
         Movement();
-        if (Vector3.Distance(transform.position, player.position) <= attackRange && Time.time - lastAttackTime >= attackCooldown && !isAttacking)
-        {
-            Attack();
-            lastAttackTime = Time.time;
-            isAttacking = true;
-            StartCoroutine(AttackCooldownCoroutine());
-        }
+        
     }
     public IEnumerator AttackCooldownCoroutine()
     {

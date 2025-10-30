@@ -49,8 +49,13 @@ public class CraftingMaterial : ScriptableObject
 {
     public Sprite icon;
     public string materialName;
+    public string description;
+    public string combinationName;
     public CraftingMaterialRarity rarity;
     public MaterialType materialType;
     public MaterialAttributeStats materialStats;
     public MaterialStats stats;
+    public CraftingMaterialTag[] tags;
+    public bool isStackable = true;
+    public bool equipmentMaterial = true;
 }

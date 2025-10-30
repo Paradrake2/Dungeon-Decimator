@@ -17,4 +17,5 @@ public class Equipment : ScriptableObject
     public EquipmentType equipmentType;
     public Sprite icon;
     public StatCollection stats = new StatCollection();
+    public int levelRequirement = 1;
 }
