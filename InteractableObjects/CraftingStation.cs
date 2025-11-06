@@ -3,12 +3,14 @@ using UnityEngine;
 
 
 
-public class CraftingStation : MonoBehaviour
+public abstract class CraftingStation : MonoBehaviour
 {
     public CraftingStationType stationType;
     public GameObject craftingUI;
     [SerializeField] private GameObject currentUI;
     public MaterialInventory inventory;
+    public bool isTagBased = false;
+    public PlayerStats stats;
     public virtual void Interact()
     {
         OpenCraftingUI();
@@ -26,10 +28,12 @@ public class CraftingStation : MonoBehaviour
         Canvas canvas = FindFirstObjectByType<Canvas>();
         GameObject ui = Instantiate(craftingUI, canvas.transform);
         ui.GetComponent<CraftingUI>().Initialize(this);
+        stats.canAttack = false;
         currentUI = ui;
     }
     public void CloseCraftingUI()
     {
+        stats.canAttack = true;
         if (currentUI != null)
         {
             Destroy(currentUI);
@@ -39,7 +43,24 @@ public class CraftingStation : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            GetPlayerStats();
             Interact();
         }
     }
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            CloseCraftingUI();
+        }
+    }
+    void GetPlayerStats()
+    {
+        if (stats == null)
+        {
+            stats = FindFirstObjectByType<PlayerStats>();
+        }
+    }
+    public abstract List<BaseRecipe> GetAvailableRecipes();
+    public abstract List<CraftingMaterial> GetAvailableMaterials();
 }

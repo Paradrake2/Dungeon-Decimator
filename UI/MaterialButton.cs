@@ -14,10 +14,14 @@ public class MaterialButton : MonoBehaviour
         amountText.text = amount.ToString();
         this.amount = amount;
         transform.SetParent(parent);
-        // Initialize the button with the material details
-    }
 
+        GetComponent<Button>().onClick.AddListener(OnClick);
+    }
     public void OnClick()
+    {
+        CraftingManager.Instance.TryAddMaterialToRecipe(material);
+    }
+    void TryAddIngredient()
     {
         
     }

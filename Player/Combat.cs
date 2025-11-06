@@ -13,6 +13,7 @@ public class Combat : MonoBehaviour
     public float attackCooldown = 1f; // placeholder value, will be set by player's attack speed stat
     private Vector3 attackDirection;
     public GameObject projectilePrefab; // what the player shoots
+    
     void Start()
     {
         player = transform;
@@ -37,7 +38,7 @@ public class Combat : MonoBehaviour
     {
         while (true)
         {
-            if (Input.GetKeyDown(attackKey))
+            if (Input.GetKeyDown(attackKey) && stats.canAttack)
             {
                 // Perform attack logic here
                 FireProjectile();

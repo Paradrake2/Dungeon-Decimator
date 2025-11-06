@@ -4,6 +4,7 @@ using UnityEngine;
 public class EquipmentIngredient
 {
     public CraftingMaterialTag materialTag;
+    public CraftingMaterial material;
     public int quantity;
 }
 
@@ -15,5 +16,8 @@ public class EquipmentRecipe : BaseRecipe
     public EquipmentIngredient[] ingredients;
     public float tier;
     
-
+    public override void GenerateDynamicUI(Transform parent, GameObject slotPrefab)
+    {
+        
+    }
 }

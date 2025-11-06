@@ -9,10 +9,13 @@ public enum RecipeType
 
 
 [CreateAssetMenu(fileName = "BaseRecipe", menuName = "Scriptable Objects/BaseRecipe")]
-public class BaseRecipe : ScriptableObject
+public abstract class BaseRecipe : ScriptableObject
 {
     public Sprite icon;
     public int levelRequirement = 1;
     public RecipeType recipeType;
     public GameObject recipeUIElementPrefab = null;
+    public bool isTagBased = false;
+    public abstract void GenerateDynamicUI(Transform parent, GameObject slotPrefab);
+    // public abstract void Craft
 }

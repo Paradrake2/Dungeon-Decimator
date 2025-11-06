@@ -20,6 +20,7 @@ public class PlayerStats : MonoBehaviour
     public float baseMovementSpeed = 0f;
     public float baseAttackSpeed = 1f;
     public int baseLevel = 1;
+    public bool canAttack = true;
     public List<AttributeResistance> attributeResistances = new List<AttributeResistance>();
 
     void Start()
