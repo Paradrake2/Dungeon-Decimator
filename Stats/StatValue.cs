@@ -38,7 +38,7 @@ public class StatValue
     {
         return statType != null ? statType.StatID : "";
     }
-    
+
     /// <summary>
     /// Set the value with validation
     /// </summary>
@@ -52,5 +52,9 @@ public class StatValue
         {
             value = newValue;
         }
+    }
+    public Sprite GetIcon()
+    {
+        return statType != null ? statType.icon : null;
     }
 }

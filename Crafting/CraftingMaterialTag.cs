@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "CraftingMaterialTag", menuName = "Scriptable Objects/CraftingMaterialTag")]
+[CreateAssetMenu(fileName = "CraftingMaterialTag", menuName = "Tags/CraftingMaterialTag")]
 public class CraftingMaterialTag : ScriptableObject
 {
     public string tagName;

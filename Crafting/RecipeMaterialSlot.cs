@@ -72,6 +72,7 @@ public class RecipeMaterialSlot : MonoBehaviour
         currentMaterial = null;
         isOccupied = false;
         UpdateSlotUI();
+        overlayImage.gameObject.SetActive(true);
     }
     public void PlaceMaterialInSlot(CraftingMaterial material)
     {
@@ -81,10 +82,12 @@ public class RecipeMaterialSlot : MonoBehaviour
             currentMaterial = material;
             isOccupied = true;
             materialImage.sprite = material.icon;
+            materialImage.color = material.itemColor;
         }
     }
-    public void CheckIfOccupied() 
+    public void CheckIfOccupied()
     {
+        Debug.Log("Checking if slot is occupied: " + isOccupied);
         if (isOccupied)
         {
             overlayImage.gameObject.SetActive(false);
@@ -102,6 +105,7 @@ public class RecipeMaterialSlot : MonoBehaviour
         else if (material != null)
         {
             materialImage.sprite = material.icon;
+            materialImage.color = material.itemColor;
             CheckIfOccupied();
         }
     }

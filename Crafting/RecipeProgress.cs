@@ -100,6 +100,7 @@ public class RecipeProgress
                 else
                 {
                     placedMaterials[material] = 1;
+                    Debug.Log(placedMaterials[material]);
                 }
                 slotIndex = i;
                 return true;

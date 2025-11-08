@@ -1,17 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum MaterialType
-{
-    Wood,
-    Stone,
-    Metal,
-    Fabric,
-    Leather,
-    Gemstone,
-    MonsterComponent,
-    Ore
-}
+
 public enum CraftingMaterialRarity
 {
     Common,
@@ -34,7 +24,7 @@ public enum MaterialAttributes
 [System.Serializable]
 public class MaterialAttributeStats
 {
-    public MaterialAttributes attribute;
+    public MaterialAttributes[] attribute;
     public float valueMult;
 }
 [System.Serializable]
@@ -48,14 +38,24 @@ public class MaterialStats
 public class CraftingMaterial : ScriptableObject
 {
     public Sprite icon;
+    public Color itemColor = Color.white;
     public string materialName;
     public string description;
     public string combinationName;
     public CraftingMaterialRarity rarity;
-    public MaterialType materialType;
     public MaterialAttributeStats materialStats;
     public MaterialStats stats;
     public CraftingMaterialTag[] tags;
     public bool isStackable = true;
     public bool equipmentMaterial = true;
+    public bool isAlloyable = false;
+
+    public float GetStatValue(string name)
+    {
+        return stats.stats.GetStat(name);
+    }
+    public List<StatValue> GetAllStats()
+    {
+        return new List<StatValue>(stats.stats.Stats);
+    }
 }

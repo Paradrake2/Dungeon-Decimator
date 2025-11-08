@@ -7,6 +7,7 @@ public class CraftingManager : MonoBehaviour
     public CraftingUI craftingUI;
     public BaseRecipe selectedRecipe;
     public RecipeProgress currentProgress;
+    [SerializeField] private List<CraftingMaterial> tempMaterials;
     private void Awake()
     {
         if (Instance == null)
@@ -42,13 +43,8 @@ public class CraftingManager : MonoBehaviour
             Debug.Log("Recipe is not complete.");
             return;
         }
-        var requiredMaterials = currentProgress.GetRequiredMaterials();
-        foreach (var kvp in requiredMaterials)
-        {
-            MaterialInventory.Instance.RemoveMaterial(kvp.Key, kvp.Value);
-        }
-
-
+        selectedRecipe.Craft();
+        /**
         switch (selectedRecipe.recipeType)
         {
             case RecipeType.CraftingMaterial:
@@ -57,18 +53,62 @@ public class CraftingManager : MonoBehaviour
             case RecipeType.Equipment:
                 CraftingFactory.CraftEquipment((EquipmentRecipe)selectedRecipe);
                 break;
+            case RecipeType.Alloying:
+                CraftingFactory.AlloyMaterial((CraftingMaterialRecipe)selectedRecipe);
+                break;
             default:
                 break;
         }
-        ClearRecipe();
+        **/
         craftingUI.PopulateMaterialInventory(craftingUI.craftingStation);
+        RefillRecipeAutomatically();
+        //ClearRecipe();
     }
-    bool HasRequiredMaterials(BaseRecipe recipe)
+    void RefillRecipeAutomatically()
     {
+        if (selectedRecipe == null) return;
+
+        currentProgress = new RecipeProgress(selectedRecipe);
         var slots = craftingUI.recipeListHolder.GetComponentsInChildren<RecipeMaterialSlot>();
         foreach (var slot in slots)
         {
-            if (!slot.isOccupied) return false;
+            slot.RemoveMaterial();
+        }
+
+        if (CheckIfEnoughMaterials(tempMaterials)) AutoFillRecipe();
+    }
+
+    void AutoFillRecipe()
+    {
+        var materialsToProcess = new List<CraftingMaterial>(tempMaterials);
+
+        tempMaterials.Clear();
+
+        foreach (CraftingMaterial material in materialsToProcess)
+        {
+            TryAddMaterialToRecipe(material);
+        }
+    }
+    bool CheckIfEnoughMaterials(List<CraftingMaterial> tempMaterials)
+    {
+        Dictionary<CraftingMaterial, int> requiredMaterials = new Dictionary<CraftingMaterial, int>();
+
+        foreach (var material in tempMaterials)
+        {
+            if (requiredMaterials.ContainsKey(material)) requiredMaterials[material]++;
+            else
+            {
+                requiredMaterials[material] = 1;
+            }
+        }
+
+        foreach (var kvp in requiredMaterials)
+        {
+            CraftingMaterial material = kvp.Key;
+            int required = kvp.Value;
+            int available = MaterialInventory.Instance.GetMaterialAmount(material);
+
+            if (available < required) return false;
         }
         return true;
     }
@@ -89,8 +129,11 @@ public class CraftingManager : MonoBehaviour
             {
                 if (currentProgress.TryAddMaterial(material, out int slotIndex))
                 {
-                    slots[slotIndex].PlaceMaterialInSlot(material);
-                    slots[slotIndex].CheckIfOccupied();
+                    slots[i].PlaceMaterialInSlot(material);
+                    slots[i].CheckIfOccupied();
+                    tempMaterials.Add(material);
+                    MaterialInventory.Instance.RemoveMaterial(material, 1);
+                    UpdateMaterialButton(material, -1);
                 }
                 break;
             }
@@ -111,7 +154,47 @@ public class CraftingManager : MonoBehaviour
                 slots[slotIndex].isOccupied = false;
                 slot.RemoveMaterial();
                 slots[slotIndex].CheckIfOccupied();
+                tempMaterials.Remove(material);
+                MaterialInventory.Instance.AddMaterial(material, 1);
+                UpdateMaterialButton(material, 1);
             }
+        }
+    }
+    public void SetUI(CraftingUI ui)
+    {
+        craftingUI = ui;
+    }
+    public void ClearUI()
+    {
+        craftingUI = null;
+    }
+
+    void UpdateMaterialButton(CraftingMaterial material, int delta)
+    {
+        var materialButtons = craftingUI.materialInventoryHolder.GetComponentsInChildren<MaterialButton>();
+
+        foreach (var button in materialButtons)
+        {
+            if (button.material == material)
+            {
+                button.UpdateAmount(delta);
+                return;
+            }
+        }
+
+        if (delta > 0)
+        {
+            CreateMaterialButton(material);
+        }
+    }
+
+    void CreateMaterialButton(CraftingMaterial material)
+    {
+        int amount = MaterialInventory.Instance.GetMaterialAmount(material);
+        if (amount > 0)
+        {
+            var button = Instantiate(craftingUI.materialButtonPrefab, craftingUI.materialInventoryHolder);
+            button.GetComponent<MaterialButton>().Initialize(material, amount, craftingUI.materialInventoryHolder);
         }
     }
 

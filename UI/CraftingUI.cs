@@ -11,6 +11,8 @@ public class CraftingUI : MonoBehaviour
     public GameObject recipeMaterialButtonPrefab;
     public Transform materialInventoryHolder;
     public Transform recipeListHolder;
+    public GameObject previewWindow;
+    public Sprite defaultPreviewSprite;
     public MaterialInventory inventory;
     public CraftingStationType craftingStationType;
     public PlayerStats stats;
@@ -26,6 +28,24 @@ public class CraftingUI : MonoBehaviour
         craftingStationType = station.stationType;
         SetupCraftingArea(station);
         PopulateMaterialInventory(station);
+        CraftingManager.Instance.SetUI(this);
+        Instance = this;
+    }
+
+    public void ResetWindow()
+    {
+        foreach (Transform child in recipeListHolder)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (Transform child in materialInventoryHolder)
+        {
+            Destroy(child.gameObject);
+        }
+        tempMaterialInventory.Clear();
+        SetPreviewSprite();
+        SetupCraftingArea(craftingStation);
+        PopulateMaterialInventory(craftingStation);
     }
     void NullChecks()
     {
@@ -95,6 +115,7 @@ public class CraftingUI : MonoBehaviour
         {
             recipe.GenerateDynamicUI(recipeListHolder, recipeMaterialButtonPrefab);
         }
+        if (recipe.icon != null) previewWindow.GetComponent<Image>().sprite = recipe.icon;
     }
 
     void GenerateEquipmentRecipeUI(EquipmentRecipe recipe)
@@ -144,9 +165,13 @@ public class CraftingUI : MonoBehaviour
         craftingStationType = null;
         CraftingManager.Instance.ClearRecipe();
         craftingStation = null;
+        CraftingManager.Instance.ClearUI();
     }
     
-    
+    public void SetPreviewSprite()
+    {
+        previewWindow.GetComponent<Image>().sprite = defaultPreviewSprite;
+    }
 
     
     /**

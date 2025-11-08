@@ -11,6 +11,7 @@ public class MaterialButton : MonoBehaviour
     {
         this.material = material;
         icon.sprite = material.icon;
+        icon.color = material.itemColor;
         amountText.text = amount.ToString();
         this.amount = amount;
         transform.SetParent(parent);
@@ -21,9 +22,25 @@ public class MaterialButton : MonoBehaviour
     {
         CraftingManager.Instance.TryAddMaterialToRecipe(material);
     }
-    void TryAddIngredient()
+    public void UpdateAmount(int newAmount)
     {
-        
+        amount += newAmount;
+        UpdateDisplay();
+    }
+    public void IncreaseAmount(int delta)
+    {
+        amount += delta;
+        UpdateDisplay();
+    }
+    public void DecreaseAmount(int delta)
+    {
+        amount -= delta;
+        UpdateDisplay();
+    }
+    void UpdateDisplay()
+    {
+        amountText.text = amount.ToString();
+        gameObject.SetActive(amount > 0);
     }
     void Start()
     {

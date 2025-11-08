@@ -4,7 +4,10 @@ using UnityEngine;
 public enum RecipeType
 {
     CraftingMaterial,
-    Equipment
+    Equipment,
+    Consumable,
+    Alloying,
+    PlaceableObject,
 }
 
 
@@ -16,6 +19,8 @@ public abstract class BaseRecipe : ScriptableObject
     public RecipeType recipeType;
     public GameObject recipeUIElementPrefab = null;
     public bool isTagBased = false;
+    public RecipeCategory recipeCategory;
+
     public abstract void GenerateDynamicUI(Transform parent, GameObject slotPrefab);
-    // public abstract void Craft
+    public abstract void Craft();
 }
