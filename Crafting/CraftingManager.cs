@@ -32,6 +32,7 @@ public class CraftingManager : MonoBehaviour
         selectedRecipe = null;
         craftingUI = null;
         currentProgress = null;
+        tempMaterials.Clear();
     }
 
     public void CraftSelectedRecipe()
@@ -60,8 +61,8 @@ public class CraftingManager : MonoBehaviour
                 break;
         }
         **/
-        craftingUI.PopulateMaterialInventory(craftingUI.craftingStation);
         RefillRecipeAutomatically();
+        //craftingUI.PopulateMaterialInventory(craftingUI.craftingStation);
         //ClearRecipe();
     }
     void RefillRecipeAutomatically()
@@ -75,7 +76,14 @@ public class CraftingManager : MonoBehaviour
             slot.RemoveMaterial();
         }
 
-        if (CheckIfEnoughMaterials(tempMaterials)) AutoFillRecipe();
+        if (CheckIfEnoughMaterials(tempMaterials))
+        {
+            AutoFillRecipe();
+            foreach (CraftingMaterial material in tempMaterials)
+            {
+                UpdateMaterialButton(material);
+            }
+        } 
     }
 
     void AutoFillRecipe()
@@ -129,11 +137,11 @@ public class CraftingManager : MonoBehaviour
             {
                 if (currentProgress.TryAddMaterial(material, out int slotIndex))
                 {
+                    MaterialInventory.Instance.RemoveMaterial(material, 1);
                     slots[i].PlaceMaterialInSlot(material);
                     slots[i].CheckIfOccupied();
                     tempMaterials.Add(material);
-                    MaterialInventory.Instance.RemoveMaterial(material, 1);
-                    UpdateMaterialButton(material, -1);
+                    UpdateMaterialButton(material);
                 }
                 break;
             }
@@ -150,13 +158,13 @@ public class CraftingManager : MonoBehaviour
             var material = slot.GetPlacedMaterial();
             if (material != null)
             {
+                MaterialInventory.Instance.AddMaterial(material, 1);
                 currentProgress.RemoveMaterial(slotIndex);
                 slots[slotIndex].isOccupied = false;
                 slot.RemoveMaterial();
                 slots[slotIndex].CheckIfOccupied();
                 tempMaterials.Remove(material);
-                MaterialInventory.Instance.AddMaterial(material, 1);
-                UpdateMaterialButton(material, 1);
+                UpdateMaterialButton(material);
             }
         }
     }
@@ -169,20 +177,22 @@ public class CraftingManager : MonoBehaviour
         craftingUI = null;
     }
 
-    void UpdateMaterialButton(CraftingMaterial material, int delta)
+    public void UpdateMaterialButton(CraftingMaterial material)
     {
         var materialButtons = craftingUI.materialInventoryHolder.GetComponentsInChildren<MaterialButton>();
-
+        Debug.Log("UpdateMaterialButton called");
         foreach (var button in materialButtons)
         {
             if (button.material == material)
             {
-                button.UpdateAmount(delta);
+                int actualAmount = MaterialInventory.Instance.GetMaterialAmount(material);
+                Debug.Log(actualAmount);
+                button.SetAmount(actualAmount);
                 return;
             }
         }
 
-        if (delta > 0)
+        if (MaterialInventory.Instance.GetMaterialAmount(material) > 0)
         {
             CreateMaterialButton(material);
         }
@@ -194,8 +204,24 @@ public class CraftingManager : MonoBehaviour
         if (amount > 0)
         {
             var button = Instantiate(craftingUI.materialButtonPrefab, craftingUI.materialInventoryHolder);
-            button.GetComponent<MaterialButton>().Initialize(material, amount, craftingUI.materialInventoryHolder);
+            button.GetComponent<MaterialButton>().Initialize(material, amount, craftingUI.materialInventoryHolder, craftingUI);
         }
     }
 
+    public void ClearTempMaterials()
+    {
+        tempMaterials.Clear();
+    }
+
+    // in case the player resets the crafting window while there are still items in the crafting menu
+    public void AddExtraTempMaterials()
+    {
+        foreach (CraftingMaterial material in tempMaterials)
+        {
+            MaterialInventory.Instance.AddMaterial(material, 1);
+        }
+    }
+
+    
 }
+

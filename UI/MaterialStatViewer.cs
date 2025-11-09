@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,8 @@ public class MaterialStatViewer : MonoBehaviour
     public Image icon;
     public Transform statHolder;
     public GameObject statBoxPrefab;
+    public TextMeshProUGUI attributeText;
+    public TextMeshProUGUI materialName;
     public MaterialAttributes[] att;
     StatCollection stats;
 
@@ -32,11 +35,20 @@ public class MaterialStatViewer : MonoBehaviour
             statBox.Initialize(stat.GetStatID(), stat.Value, stat.GetIcon());
         }
         // set material attributes
+        foreach (var attribute in att)
+        {
+            attributeText.text += attribute.ToString() + ", ";
+        }
+        materialName.text = material.name;
     }
 
     void Start()
     {
         Initialize(material);
+    }
+    public void Close() 
+    {
+        Destroy(this.gameObject);
     }
 
     // Update is called once per frame

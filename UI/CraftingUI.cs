@@ -19,7 +19,10 @@ public class CraftingUI : MonoBehaviour
     public CraftingUI Instance;
     //[SerializeField] private BaseRecipe selectedRecipe;
     public CraftingStation craftingStation;
+    public GameObject materialInspector;
     public Dictionary<CraftingMaterial, int> tempMaterialInventory = new Dictionary<CraftingMaterial, int>();
+    public GameObject materialInspectorButton;
+    public bool inspectMaterial = false;
 
     public void Initialize(CraftingStation station)
     {
@@ -29,6 +32,8 @@ public class CraftingUI : MonoBehaviour
         SetupCraftingArea(station);
         PopulateMaterialInventory(station);
         CraftingManager.Instance.SetUI(this);
+        tempMaterialInventory.Clear();
+
         Instance = this;
     }
 
@@ -42,7 +47,8 @@ public class CraftingUI : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        tempMaterialInventory.Clear();
+        CraftingManager.Instance.AddExtraTempMaterials();
+        CraftingManager.Instance.ClearTempMaterials();
         SetPreviewSprite();
         SetupCraftingArea(craftingStation);
         PopulateMaterialInventory(craftingStation);
@@ -70,7 +76,7 @@ public class CraftingUI : MonoBehaviour
             if (materialStack != null && materialStack.amount > 0)
             {
                 var button = Instantiate(materialButtonPrefab, materialInventoryHolder);
-                button.GetComponent<MaterialButton>().Initialize(material, materialStack.amount, button.transform.parent);
+                button.GetComponent<MaterialButton>().Initialize(material, materialStack.amount, button.transform.parent, this);
             }
         }
     }
@@ -113,7 +119,7 @@ public class CraftingUI : MonoBehaviour
         }
         else
         {
-            recipe.GenerateDynamicUI(recipeListHolder, recipeMaterialButtonPrefab);
+            recipe.GenerateDynamicUI(recipeListHolder, recipeMaterialButtonPrefab, this);
         }
         if (recipe.icon != null) previewWindow.GetComponent<Image>().sprite = recipe.icon;
     }
@@ -138,7 +144,7 @@ public class CraftingUI : MonoBehaviour
         {
             GameObject slot = Instantiate(recipeMaterialButtonPrefab, parent);
             var tagSlot = slot.GetComponent<RecipeMaterialSlot>();
-            tagSlot.SetupTagBasedSlot(requiredMaterial.materialTag);
+            tagSlot.SetupTagBasedSlot(requiredMaterial.materialTag, this);
         }
     }
 
@@ -150,7 +156,7 @@ public class CraftingUI : MonoBehaviour
             {
                 GameObject slot = Instantiate(recipeMaterialButtonPrefab, recipeListHolder);
                 var materialSlot = slot.GetComponent<RecipeMaterialSlot>();
-                materialSlot.SetupSpecificMaterialSlot(ingredient.material);
+                materialSlot.SetupSpecificMaterialSlot(ingredient.material, this);
                 
             }
             tempMaterialInventory.AddRange(recipe.ingredients.ToDictionary(ing => ing.material, ing => ing.quantity));
@@ -167,12 +173,22 @@ public class CraftingUI : MonoBehaviour
         craftingStation = null;
         CraftingManager.Instance.ClearUI();
     }
-    
+
     public void SetPreviewSprite()
     {
         previewWindow.GetComponent<Image>().sprite = defaultPreviewSprite;
     }
 
+    public void BringUpMaterialInspector(CraftingMaterial material)
+    {
+        GameObject inspector = Instantiate(materialInspector, transform);
+        inspector.GetComponent<MaterialStatViewer>().Initialize(material);
+    }
+    public void ToggleInspectMaterial()
+    {
+        inspectMaterial = !inspectMaterial;
+        materialInspectorButton.GetComponent<Image>().color = inspectMaterial ? Color.green : Color.white;
+    }
     
     /**
     void SetupTagBasedSlots(CraftingStation station)

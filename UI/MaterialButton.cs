@@ -7,11 +7,13 @@ public class MaterialButton : MonoBehaviour
     public int amount;
     public Image icon;
     public TextMeshProUGUI amountText;
-    public void Initialize(CraftingMaterial material, int amount, Transform parent)
+    public CraftingUI cUI;
+    public void Initialize(CraftingMaterial material, int amount, Transform parent, CraftingUI _cUI)
     {
         this.material = material;
         icon.sprite = material.icon;
         icon.color = material.itemColor;
+        cUI = _cUI;
         amountText.text = amount.ToString();
         this.amount = amount;
         transform.SetParent(parent);
@@ -20,11 +22,21 @@ public class MaterialButton : MonoBehaviour
     }
     public void OnClick()
     {
+        if (cUI.inspectMaterial)
+        {
+            cUI.BringUpMaterialInspector(material);
+            return;
+        }
         CraftingManager.Instance.TryAddMaterialToRecipe(material);
     }
     public void UpdateAmount(int newAmount)
     {
         amount += newAmount;
+        UpdateDisplay();
+    }
+    public void SetAmount(int _amount)
+    {
+        amount = _amount;
         UpdateDisplay();
     }
     public void IncreaseAmount(int delta)

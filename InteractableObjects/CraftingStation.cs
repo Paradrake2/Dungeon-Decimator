@@ -34,6 +34,7 @@ public abstract class CraftingStation : MonoBehaviour
     public void CloseCraftingUI()
     {
         stats.canAttack = true;
+        CraftingManager.Instance.ClearTempMaterials();
         if (currentUI != null)
         {
             Destroy(currentUI);

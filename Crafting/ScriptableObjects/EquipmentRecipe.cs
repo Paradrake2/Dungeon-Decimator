@@ -16,7 +16,7 @@ public class EquipmentRecipe : BaseRecipe
     public EquipmentIngredient[] ingredients;
     public float tier;
 
-    public override void GenerateDynamicUI(Transform parent, GameObject slotPrefab)
+    public override void GenerateDynamicUI(Transform parent, GameObject slotPrefab, CraftingUI cUI)
     {
         
     }

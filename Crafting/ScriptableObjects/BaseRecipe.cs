@@ -21,6 +21,6 @@ public abstract class BaseRecipe : ScriptableObject
     public bool isTagBased = false;
     public RecipeCategory recipeCategory;
 
-    public abstract void GenerateDynamicUI(Transform parent, GameObject slotPrefab);
+    public abstract void GenerateDynamicUI(Transform parent, GameObject slotPrefab, CraftingUI cUI);
     public abstract void Craft();
 }

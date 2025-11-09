@@ -7,7 +7,7 @@ public class PlaceableObjectRecipe : BaseRecipe
     public GameObject placeableObjectPrefab;
     public int resultQuantity = 1;
 
-    public override void GenerateDynamicUI(Transform parent, GameObject slotPrefab)
+    public override void GenerateDynamicUI(Transform parent, GameObject slotPrefab, CraftingUI cUI)
     {
         throw new System.NotImplementedException();
     }

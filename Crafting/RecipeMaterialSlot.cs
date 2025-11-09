@@ -19,18 +19,21 @@ public class RecipeMaterialSlot : MonoBehaviour
     [SerializeField] private CraftingMaterial currentMaterial;
     public bool isOccupied = false;
     public CraftingMaterial specificMaterial;
+    public CraftingUI cUI;
 
 
-    public void SetupTagBasedSlot(CraftingMaterialTag tags)
+    public void SetupTagBasedSlot(CraftingMaterialTag tags, CraftingUI _cUI)
     {
+        cUI = _cUI;
         acceptedTags.Add(tags);
         isTagBased = true;
         slotImage.sprite = defaultIcon;
         UpdateSlotUI(acceptedTags, null);
     }
 
-    public void SetupSpecificMaterialSlot(CraftingMaterial material)
+    public void SetupSpecificMaterialSlot(CraftingMaterial material, CraftingUI _cUI)
     {
+        cUI = _cUI;
         specificMaterial = material;
         isTagBased = false;
         overlayImage.gameObject.SetActive(true);
@@ -141,22 +144,34 @@ public class RecipeMaterialSlot : MonoBehaviour
     {
         Debug.Log("RecipeMaterialSlot: Slot clicked");
         // Implement logic for when the slot is clicked (e.g., remove material)
-        if (isOccupied)
+        if (cUI.inspectMaterial)
         {
-            Debug.Log($"RecipeMaterialSlot: Removing material {currentMaterial.materialName} from slot");
-            int slotIndex = transform.GetSiblingIndex();
-            CraftingManager.Instance.RemoveMaterialFromRecipe(slotIndex);
-            currentMaterial = null;
-            isOccupied = false;
-            materialImage.sprite = null;
-            if (isTagBased)
-            {
-                //StartCoroutine(LoadTagIcons(acceptedTags));
-            }
-            else if (specificMaterial != null)
-            {
-                materialImage.sprite = specificMaterial.icon;
-            }
+            cUI.BringUpMaterialInspector(specificMaterial);
         }
+        else
+        {
+            RegularClick();
+        }
+    }
+    
+    void RegularClick()
+    {
+        if (isOccupied)
+            {
+                Debug.Log($"RecipeMaterialSlot: Removing material {currentMaterial.materialName} from slot");
+                int slotIndex = transform.GetSiblingIndex();
+                CraftingManager.Instance.RemoveMaterialFromRecipe(slotIndex);
+                currentMaterial = null;
+                isOccupied = false;
+                materialImage.sprite = null;
+                if (isTagBased)
+                {
+                    //StartCoroutine(LoadTagIcons(acceptedTags));
+                }
+                else if (specificMaterial != null)
+                {
+                    materialImage.sprite = specificMaterial.icon;
+                }
+            }
     }
 }

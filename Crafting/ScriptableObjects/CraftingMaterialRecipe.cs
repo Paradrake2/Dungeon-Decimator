@@ -14,7 +14,7 @@ public class CraftingMaterialRecipe : BaseRecipe
     public CraftingMaterialIngredient[] ingredients;
     public CraftingMaterial resultMaterial;
     public int resultQuantity = 1;
-    public override void GenerateDynamicUI(Transform parent, GameObject slotPrefab)
+    public override void GenerateDynamicUI(Transform parent, GameObject slotPrefab, CraftingUI cUI)
     {
         foreach (var ingredient in ingredients)
         {
@@ -22,7 +22,7 @@ public class CraftingMaterialRecipe : BaseRecipe
             {
                 GameObject slot = Instantiate(slotPrefab, parent);
                 var materialSlot = slot.GetComponent<RecipeMaterialSlot>();
-                materialSlot.SetupSpecificMaterialSlot(ingredient.material);
+                materialSlot.SetupSpecificMaterialSlot(ingredient.material, cUI);
 
             }
         }
@@ -40,7 +40,7 @@ public class CraftingMaterialRecipe : BaseRecipe
         }
         **/
         Debug.Log("Crafting " + resultMaterial.materialName + " x" + resultQuantity);
-        
+
         /**
         foreach (var ingredient in ingredients)
         {
@@ -48,5 +48,6 @@ public class CraftingMaterialRecipe : BaseRecipe
         }
         **/
         MaterialInventory.Instance.AddMaterial(resultMaterial, resultQuantity);
+        CraftingManager.Instance.UpdateMaterialButton(resultMaterial);
     }
 }
