@@ -57,4 +57,8 @@ public class StatValue
     {
         return statType != null ? statType.icon : null;
     }
+    public Color GetColor()
+    {
+        return statType.displayColor;
+    }
 }

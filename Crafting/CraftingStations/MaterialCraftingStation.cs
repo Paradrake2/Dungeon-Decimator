@@ -10,13 +10,15 @@ public class MaterialCraftingStation : CraftingStation
         {
             availableMaterials.Add(material);
         }
+
+        CraftedItemsCheck(availableMaterials, true);
         return availableMaterials;
     }
 
     public override List<BaseRecipe> GetAvailableRecipes()
     {
         List<BaseRecipe> availableRecipes = new List<BaseRecipe>();
-        foreach (var recipe in Resources.LoadAll<CraftingMaterialRecipe>("Recipes/CraftingMaterials"))
+        foreach (var recipe in Resources.LoadAll<BaseRecipe>("Recipes/CraftingMaterials"))
         {
             if (recipe.levelRequirement <= stats.GetStatValue("Level"))
             {

@@ -17,6 +17,7 @@ public class MaterialStatViewer : MonoBehaviour
     {
         this.material = material;
         this.icon.sprite = material.icon;
+        this.icon.color = material.itemColor;
         this.stats = material.stats.stats;
         this.att = material.materialStats.attribute;
         SetupStats();
@@ -32,14 +33,14 @@ public class MaterialStatViewer : MonoBehaviour
         {
             GameObject statBoxObj = Instantiate(statBoxPrefab, statHolder);
             MaterialStatBox statBox = statBoxObj.GetComponent<MaterialStatBox>();
-            statBox.Initialize(stat.GetStatID(), stat.Value, stat.GetIcon());
+            statBox.Initialize(stat.GetStatID(), stat.Value, stat.GetIcon(), stat.GetColor());
         }
         // set material attributes
         foreach (var attribute in att)
         {
             attributeText.text += attribute.ToString() + ", ";
         }
-        materialName.text = material.name;
+        materialName.text = material.materialName;
     }
 
     void Start()

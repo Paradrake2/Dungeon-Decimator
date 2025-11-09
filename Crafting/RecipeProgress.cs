@@ -36,6 +36,9 @@ public class RecipeProgress
             case RecipeType.Equipment:
                 SetupEquipmentRecipe();
                 break;
+            case RecipeType.CraftingMaterialTB:
+                SetupCraftingMaterialTBRecipe();
+                break;
         }
 
     }
@@ -83,7 +86,36 @@ public class RecipeProgress
             }
         }
     }
+    public void SetupCraftingMaterialTBRecipe()
+    {
+        var matRecipe = (CraftingMaterialRecipeTB)recipe;
+        foreach (var ingredient in matRecipe.ingredients)
+        {
+            for (int i = 0; i < ingredient.quantity; i++)
+            {
+                if (ingredient.useTag)
+                {
+                    slots.Add(new RecipeSlotData
+                    {
+                        requiredTag = ingredient.materialTag,
+                        isTagBased = true,
+                        isFilled = false
+                    });
 
+                }
+                else
+                {
+                    slots.Add(new RecipeSlotData
+                    {
+                        requiredMaterial = ingredient.specificMaterial,
+                        isTagBased = false,
+                        isFilled = false
+                    });
+                }
+                Debug.Log(slots[slots.Count - 1].isTagBased);
+            }
+        }
+    }
     public bool TryAddMaterial(CraftingMaterial material, out int slotIndex)
     {
         for (int i = 0; i < slots.Count; i++)
@@ -91,6 +123,7 @@ public class RecipeProgress
             var slot = slots[i];
             if (!slot.isFilled && CanMaterialFitSlot(material, slot))
             {
+                Debug.LogWarning("Can add material");
                 slot.placedMaterial = material;
                 slot.isFilled = true;
                 if (placedMaterials.ContainsKey(material))
@@ -137,28 +170,28 @@ public class RecipeProgress
         if (slot.isTagBased)
         {
            // Check if material has any of the required tags
-        bool hasTag = false;
-        
-        if (material.tags != null && material.tags.Count() > 0)
-        {
-            foreach (var materialTag in material.tags)
+            bool hasTag = false;
+            
+            if (material.tags != null && material.tags.Count() > 0)
             {
-                if (materialTag == slot.requiredTag)
+                foreach (var materialTag in material.tags)
                 {
-                    hasTag = true;
-                    break;
+                    if (materialTag == slot.requiredTag)
+                    {
+                        hasTag = true;
+                        break;
+                    }
                 }
             }
-        }
         
-        Debug.Log($"Material: {material.materialName}, Required Tag: {slot.requiredTag}, Has Tag: {hasTag}");
-        Debug.Log($"Material Tags: {string.Join(", ", material.tags.ToList() ?? new List<CraftingMaterialTag>())}");
-        
-        return hasTag;
+            Debug.Log($"Material: {material.materialName}, Required Tag: {slot.requiredTag}, Has Tag: {hasTag}");
+            Debug.Log($"Material Tags: {string.Join(", ", material.tags.ToList() ?? new List<CraftingMaterialTag>())}");
             
+            return hasTag;
         }
         else
         {
+            Debug.LogWarning(material.ToString() == slot.requiredMaterial + " AAAAAAAAAAAA");
             return material == slot.requiredMaterial;
         }
     }

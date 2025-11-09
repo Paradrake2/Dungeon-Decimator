@@ -10,9 +10,6 @@ public class StatCollection
 {
     [SerializeField] private List<StatValue> stats = new List<StatValue>();
     
-    /// <summary>
-    /// All stats in this collection
-    /// </summary>
     public IReadOnlyList<StatValue> Stats => stats;
     
     /// <summary>
@@ -31,9 +28,6 @@ public class StatCollection
         }
     }
     
-    /// <summary>
-    /// Get the value of a specific stat type
-    /// </summary>
     public float GetStat(StatType statType)
     {
         var stat = stats.FirstOrDefault(s => s.StatType == statType);

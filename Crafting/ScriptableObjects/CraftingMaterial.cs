@@ -46,6 +46,7 @@ public class CraftingMaterial : ScriptableObject
     public MaterialAttributeStats materialStats;
     public MaterialStats stats;
     public CraftingMaterialTag[] tags;
+    public CraftingMaterialTag[] secondaryTags;
     public bool isStackable = true;
     public bool equipmentMaterial = true;
     public bool isAlloyable = false;
@@ -57,5 +58,13 @@ public class CraftingMaterial : ScriptableObject
     public List<StatValue> GetAllStats()
     {
         return new List<StatValue>(stats.stats.Stats);
+    }
+    public void SetStatValue(string name, float value)
+    {
+        var statType = StatDatabase.Instance.GetStat(name);
+        if (statType != null)
+        {
+            stats.stats.SetStat(statType, value);
+        }
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 public enum RecipeType
 {
     CraftingMaterial,
+    CraftingMaterialTB,
     Equipment,
     Consumable,
     Alloying,

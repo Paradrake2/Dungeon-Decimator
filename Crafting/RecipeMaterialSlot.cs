@@ -13,7 +13,7 @@ public class RecipeMaterialSlot : MonoBehaviour
     
     public List<CraftingMaterialTag> acceptedTags = new List<CraftingMaterialTag>();
     public bool isTagBased;
-
+    public bool tagRequired = false;
 
     public Sprite defaultIcon;
     [SerializeField] private CraftingMaterial currentMaterial;
@@ -27,6 +27,7 @@ public class RecipeMaterialSlot : MonoBehaviour
         cUI = _cUI;
         acceptedTags.Add(tags);
         isTagBased = true;
+        tagRequired = true;
         slotImage.sprite = defaultIcon;
         UpdateSlotUI(acceptedTags, null);
     }
@@ -36,8 +37,19 @@ public class RecipeMaterialSlot : MonoBehaviour
         cUI = _cUI;
         specificMaterial = material;
         isTagBased = false;
+        tagRequired = false;
         overlayImage.gameObject.SetActive(true);
         UpdateSlotUI(null, material);
+    }
+    public void SetupSpecificTagMaterialSlot(CraftingMaterial material, CraftingMaterialTag tags, CraftingUI _cUI)
+    {
+        cUI = _cUI;
+        specificMaterial = material;
+        if (tags != null) acceptedTags.Add(tags);
+        isTagBased = true;
+        tagRequired = false;
+        overlayImage.gameObject.SetActive(true);
+        UpdateSlotUI(acceptedTags, material);
     }
 
     public bool CanAcceptMaterial(CraftingMaterial material)
@@ -47,7 +59,7 @@ public class RecipeMaterialSlot : MonoBehaviour
             Debug.Log("Slot is occupied");
             return false;
         }
-        if (isTagBased)
+        if (isTagBased && tagRequired)
         {
             foreach (var tag in acceptedTags)
             {
@@ -80,6 +92,7 @@ public class RecipeMaterialSlot : MonoBehaviour
     public void PlaceMaterialInSlot(CraftingMaterial material)
     {
         StopCoroutine(LoadTagIcons(acceptedTags));
+        Debug.Log("Placed material");
         if (CanAcceptMaterial(material))
         {
             currentMaterial = material;
@@ -94,16 +107,18 @@ public class RecipeMaterialSlot : MonoBehaviour
         if (isOccupied)
         {
             overlayImage.gameObject.SetActive(false);
+            StopCoroutine(LoadTagIcons(acceptedTags));
         } else
         {
             overlayImage.gameObject.SetActive(true);
+            StartCoroutine(LoadTagIcons(acceptedTags));
         }
     }
     public void UpdateSlotUI(List<CraftingMaterialTag> tags = null, CraftingMaterial material = null)
     {
         if (tags != null)
         {
-            //StartCoroutine(LoadTagIcons(tags));
+            StartCoroutine(LoadTagIcons(tags));
         }
         else if (material != null)
         {
@@ -124,8 +139,8 @@ public class RecipeMaterialSlot : MonoBehaviour
             }
             foreach (var tag in tags)
             {
-                yield return new WaitForSeconds(0.5f);
                 UpdateTagIconUI(tag.icon);
+                yield return new WaitForSeconds(0.5f);
             }
         }
     }
@@ -146,7 +161,7 @@ public class RecipeMaterialSlot : MonoBehaviour
         // Implement logic for when the slot is clicked (e.g., remove material)
         if (cUI.inspectMaterial)
         {
-            cUI.BringUpMaterialInspector(specificMaterial);
+            if (specificMaterial != null) cUI.BringUpMaterialInspector(specificMaterial);
         }
         else
         {

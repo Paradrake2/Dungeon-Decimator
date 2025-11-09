@@ -12,8 +12,8 @@ public class EquipmentIngredient
 [CreateAssetMenu(fileName = "EquipmentRecipe", menuName = "Scriptable Objects/EquipmentRecipe")]
 public class EquipmentRecipe : BaseRecipe
 {
-    public EquipmentType equipmentType;
     public EquipmentIngredient[] ingredients;
+    public Equipment baseEquipment;
     public float tier;
 
     public override void GenerateDynamicUI(Transform parent, GameObject slotPrefab, CraftingUI cUI)

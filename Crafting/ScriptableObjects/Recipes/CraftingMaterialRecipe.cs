@@ -29,24 +29,6 @@ public class CraftingMaterialRecipe : BaseRecipe
     }
     public override void Craft()
     {
-        /**
-        foreach (var ingredient in ingredients)
-        {
-            Debug.Log("Checking for " + ingredient.material.materialName + " x" + ingredient.quantity);
-            if (!(MaterialInventory.Instance.GetMaterialAmount(ingredient.material) < ingredient.quantity))
-            {
-                return;
-            }
-        }
-        **/
-        Debug.Log("Crafting " + resultMaterial.materialName + " x" + resultQuantity);
-
-        /**
-        foreach (var ingredient in ingredients)
-        {
-            MaterialInventory.Instance.RemoveMaterial(ingredient.material, ingredient.quantity);
-        }
-        **/
         MaterialInventory.Instance.AddMaterial(resultMaterial, resultQuantity);
         CraftingManager.Instance.UpdateMaterialButton(resultMaterial);
     }

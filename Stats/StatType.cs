@@ -14,23 +14,20 @@ public class StatType : ScriptableObject
     public StatCategory category;
     public StatValueType valueType;
     public bool isPercentage;
+    public bool capped;
     public float minValue = 0f;
     public float maxValue = 1000f;
     public float defaultValue = 0f;
+    public float value = 0f;
     
     [Header("Display")]
     public string suffix = "";
     public int decimalPlaces = 0;
     public Color displayColor = Color.white;
     
-    /// <summary>
-    /// Unique identifier for this stat type
-    /// </summary>
+
     public string StatID => name;
-    
-    /// <summary>
-    /// Format the value for display
-    /// </summary>
+
     public string FormatValue(float value)
     {
         string formatted = value.ToString($"F{decimalPlaces}");
@@ -39,6 +36,11 @@ public class StatType : ScriptableObject
         else if (!string.IsNullOrEmpty(suffix))
             formatted += suffix;
         return formatted;
+    }
+    
+    public float GetValue()
+    {
+        return value;
     }
 }
 

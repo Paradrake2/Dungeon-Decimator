@@ -64,4 +64,20 @@ public abstract class CraftingStation : MonoBehaviour
     }
     public abstract List<BaseRecipe> GetAvailableRecipes();
     public abstract List<CraftingMaterial> GetAvailableMaterials();
+    public void CraftedItemsCheck(List<CraftingMaterial> mat, bool? condition)
+    {
+        if (MaterialInventory.Instance != null)
+        {
+            if ((bool)condition)
+            {
+                foreach (var material in MaterialInventory.Instance.materials)
+                {
+                    if (material.amount > 0 && !mat.Contains(material.material))
+                    {
+                        mat.Add(material.material);
+                    }
+                }
+            }
+        }
+    }
 }

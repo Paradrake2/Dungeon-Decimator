@@ -23,6 +23,7 @@ public class CraftingUI : MonoBehaviour
     public Dictionary<CraftingMaterial, int> tempMaterialInventory = new Dictionary<CraftingMaterial, int>();
     public GameObject materialInspectorButton;
     public bool inspectMaterial = false;
+    [SerializeField] private List<CraftingMaterial> craftingMaterials;
 
     public void Initialize(CraftingStation station)
     {
@@ -49,6 +50,8 @@ public class CraftingUI : MonoBehaviour
         }
         CraftingManager.Instance.AddExtraTempMaterials();
         CraftingManager.Instance.ClearTempMaterials();
+        recipeListHolder.GetComponent<GridLayoutGroup>().enabled = true;
+
         SetPreviewSprite();
         SetupCraftingArea(craftingStation);
         PopulateMaterialInventory(craftingStation);
@@ -96,6 +99,7 @@ public class CraftingUI : MonoBehaviour
             var button = Instantiate(recipeMaterialButtonPrefab, recipeListHolder);
             button.GetComponent<Button>().onClick.AddListener(() => OnRecipeButtonClick(recipe));
             button.GetComponent<Image>().sprite = recipe.icon;
+            button.GetComponent<RecipeMaterialSlot>().cUI = this;
         }
     }
 

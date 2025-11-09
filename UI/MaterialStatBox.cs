@@ -9,11 +9,11 @@ public class MaterialStatBox : MonoBehaviour
     public float value;
     public Color displayColor;
 
-    public void Initialize(string statType, float value, Sprite icon)
+    public void Initialize(string statType, float value, Sprite icon, Color color)
     {
         this.stat = statType;
         this.value = value;
-        //this.displayColor = this.stat.displayColor;
+        this.displayColor = color;
         if (icon != null)
         {
             this.icon.sprite = icon;
@@ -24,8 +24,8 @@ public class MaterialStatBox : MonoBehaviour
 
     void SetupStatText()
     {
-        //statText.color = displayColor;
-        statText.text = stat + " Value:" + value;
+        statText.color = displayColor;
+        statText.text = stat + " Value: " + value;
     }
 
     void Start()
