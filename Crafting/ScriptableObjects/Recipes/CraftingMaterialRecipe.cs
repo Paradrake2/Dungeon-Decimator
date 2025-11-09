@@ -29,6 +29,7 @@ public class CraftingMaterialRecipe : BaseRecipe
     }
     public override void Craft()
     {
+
         MaterialInventory.Instance.AddMaterial(resultMaterial, resultQuantity);
         CraftingManager.Instance.UpdateMaterialButton(resultMaterial);
     }

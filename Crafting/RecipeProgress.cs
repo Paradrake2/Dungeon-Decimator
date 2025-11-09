@@ -10,6 +10,7 @@ public class RecipeSlotData
     public CraftingMaterialTag requiredTag;
     public bool isTagBased;
     public bool isFilled;
+    public bool isDynamicSlot;
 }
 
 
@@ -38,6 +39,9 @@ public class RecipeProgress
                 break;
             case RecipeType.CraftingMaterialTB:
                 SetupCraftingMaterialTBRecipe();
+                break;
+            case RecipeType.MonoItem:
+                SetupMonoItemRecipe();
                 break;
         }
 
@@ -116,6 +120,24 @@ public class RecipeProgress
             }
         }
     }
+
+    public void SetupMonoItemRecipe()
+    {
+        var matRecipe = (ModularMonoItemRecipe)recipe;
+        foreach (var ingredient in matRecipe.ingredient)
+        {
+            for (int i = 0; i < ingredient.quantity; i++)
+            {
+                slots.Add(new RecipeSlotData
+                {
+                    requiredTag = ingredient.materialTag,
+                    isTagBased = false,
+                    isFilled = false,
+                    isDynamicSlot = true
+                });
+            }
+        }
+    }
     public bool TryAddMaterial(CraftingMaterial material, out int slotIndex)
     {
         for (int i = 0; i < slots.Count; i++)
@@ -167,6 +189,17 @@ public class RecipeProgress
 
     bool CanMaterialFitSlot(CraftingMaterial material, RecipeSlotData slot)
     {
+        if (slot.isDynamicSlot)
+        {
+            Debug.Log("Dynamic slot check");
+            if (placedMaterials.Count == 0)
+            {
+                return true;
+            } else
+            {
+                return placedMaterials.ContainsKey(material);
+            }
+        }
         if (slot.isTagBased)
         {
            // Check if material has any of the required tags

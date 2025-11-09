@@ -50,6 +50,7 @@ public class CraftingMaterial : ScriptableObject
     public bool isStackable = true;
     public bool equipmentMaterial = true;
     public bool isAlloyable = false;
+    public string ID;
 
     public float GetStatValue(string name)
     {
@@ -66,5 +67,9 @@ public class CraftingMaterial : ScriptableObject
         {
             stats.stats.SetStat(statType, value);
         }
+    }
+    public string GetID()
+    {
+        return ID;
     }
 }

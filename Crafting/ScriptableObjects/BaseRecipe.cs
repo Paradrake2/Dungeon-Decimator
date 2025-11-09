@@ -8,6 +8,7 @@ public enum RecipeType
     Equipment,
     Consumable,
     Alloying,
+    MonoItem,
     PlaceableObject,
 }
 

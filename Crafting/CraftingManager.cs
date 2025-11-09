@@ -183,16 +183,16 @@ public class CraftingManager : MonoBehaviour
         Debug.Log("UpdateMaterialButton called");
         foreach (var button in materialButtons)
         {
-            if (button.material == material)
+            if (button.material.ID == material.ID)
             {
-                int actualAmount = MaterialInventory.Instance.GetMaterialAmount(material);
+                int actualAmount = MaterialInventory.Instance.GetMaterialAmountByID(material);
                 Debug.Log(actualAmount);
                 button.SetAmount(actualAmount);
                 return;
             }
         }
 
-        if (MaterialInventory.Instance.GetMaterialAmount(material) > 0)
+        if (MaterialInventory.Instance.GetMaterialAmountByID(material) > 0)
         {
             CreateMaterialButton(material);
         }

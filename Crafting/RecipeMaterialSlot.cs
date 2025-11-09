@@ -14,10 +14,10 @@ public class RecipeMaterialSlot : MonoBehaviour
     public List<CraftingMaterialTag> acceptedTags = new List<CraftingMaterialTag>();
     public bool isTagBased;
     public bool tagRequired = false;
-
     public Sprite defaultIcon;
     [SerializeField] private CraftingMaterial currentMaterial;
     public bool isOccupied = false;
+    public bool isMonoItem = false;
     public CraftingMaterial specificMaterial;
     public CraftingUI cUI;
 
@@ -50,6 +50,17 @@ public class RecipeMaterialSlot : MonoBehaviour
         tagRequired = false;
         overlayImage.gameObject.SetActive(true);
         UpdateSlotUI(acceptedTags, material);
+    }
+    public void SetupMonoItemSlot(CraftingUI _cUI, bool isTagBased, CraftingMaterial material = null, CraftingMaterialTag tags = null)
+    {
+        cUI = _cUI;
+        if (material != null) specificMaterial = material;
+        if (tags != null) acceptedTags.Add(tags);
+        isMonoItem = true;
+        this.isTagBased = isTagBased;
+        tagRequired = isTagBased;
+        overlayImage.gameObject.SetActive(true);
+        UpdateSlotUI(null, material);
     }
 
     public bool CanAcceptMaterial(CraftingMaterial material)
