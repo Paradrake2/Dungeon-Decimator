@@ -8,7 +8,7 @@ public class CraftingMaterialIngredient
 }
 
 
-[CreateAssetMenu(fileName = "CraftingMaterialRecipe", menuName = "Scriptable Objects/CraftingMaterialRecipe")]
+[CreateAssetMenu(fileName = "CraftingMaterialRecipe", menuName = "Recipes/CraftingMaterialRecipe")]
 public class CraftingMaterialRecipe : BaseRecipe
 {
     public CraftingMaterialIngredient[] ingredients;

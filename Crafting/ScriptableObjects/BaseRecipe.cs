@@ -9,6 +9,7 @@ public enum RecipeType
     Consumable,
     Alloying,
     MonoItem,
+    TagBasedSpecificMaterialRecipe,
     PlaceableObject,
 }
 
@@ -25,4 +26,8 @@ public abstract class BaseRecipe : ScriptableObject
 
     public abstract void GenerateDynamicUI(Transform parent, GameObject slotPrefab, CraftingUI cUI);
     public abstract void Craft();
+    public CraftingMaterialTag[] GetTags(CraftingMaterial craftingMaterial)
+    {
+        return craftingMaterial.tags;
+    }
 }

@@ -10,14 +10,16 @@ public class RecipeMaterialSlot : MonoBehaviour
     public Image materialImage;
     public Button slotButton;
     public Image overlayImage;
-    
+
     public List<CraftingMaterialTag> acceptedTags = new List<CraftingMaterialTag>();
+    public CraftingMaterialTag specificTag = null;
     public bool isTagBased;
     public bool tagRequired = false;
     public Sprite defaultIcon;
     [SerializeField] private CraftingMaterial currentMaterial;
     public bool isOccupied = false;
     public bool isMonoItem = false;
+    public bool multiTag = false;
     public CraftingMaterial specificMaterial;
     public CraftingUI cUI;
 
@@ -62,7 +64,24 @@ public class RecipeMaterialSlot : MonoBehaviour
         overlayImage.gameObject.SetActive(true);
         UpdateSlotUI(null, material);
     }
-
+    public void SetupMultiTagBaseSlot(CraftingMaterialTag[] tags, CraftingUI _cUI, CraftingMaterial specificMaterial = null, CraftingMaterialTag specificTag = null)
+    {
+        cUI = _cUI;
+        if (specificMaterial != null) this.specificMaterial = specificMaterial;
+        if (tags != null)
+        {
+            foreach (var tag in tags)
+            {
+                acceptedTags.Add(tag);
+            }
+        }
+        if (specificTag != null) this.specificTag = specificTag;
+        multiTag = true;
+        isTagBased = true;
+        tagRequired = !specificMaterial;
+        overlayImage.gameObject.SetActive(true);
+        UpdateSlotUI(acceptedTags, specificMaterial);
+    }
     public bool CanAcceptMaterial(CraftingMaterial material)
     {
         if (isOccupied)
@@ -70,7 +89,7 @@ public class RecipeMaterialSlot : MonoBehaviour
             Debug.Log("Slot is occupied");
             return false;
         }
-        if (isTagBased && tagRequired)
+        if (isTagBased && tagRequired && !multiTag)
         {
             foreach (var tag in acceptedTags)
             {
@@ -81,7 +100,20 @@ public class RecipeMaterialSlot : MonoBehaviour
                 }
             }
         }
-        else
+        else if (isTagBased && tagRequired && multiTag)
+        {
+            Debug.Log("Multi-tag check");
+            foreach (var tag in acceptedTags)
+            {
+                if (!material.tags.Contains(tag))
+                {
+                    Debug.Log("false");
+                    return false;
+                }
+            }
+            if (material.materialTag != specificTag) return false;
+            return true;
+        } else
         {
             return material == specificMaterial;
         }

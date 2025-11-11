@@ -9,7 +9,7 @@ public class EquipmentIngredient
 }
 
 
-[CreateAssetMenu(fileName = "EquipmentRecipe", menuName = "Scriptable Objects/EquipmentRecipe")]
+[CreateAssetMenu(fileName = "EquipmentRecipe", menuName = "Recipes/EquipmentRecipe")]
 public class EquipmentRecipe : BaseRecipe
 {
     public EquipmentIngredient[] ingredients;

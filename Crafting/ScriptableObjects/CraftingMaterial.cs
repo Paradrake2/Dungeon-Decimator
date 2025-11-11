@@ -47,6 +47,7 @@ public class CraftingMaterial : ScriptableObject
     public MaterialStats stats;
     public CraftingMaterialTag[] tags;
     public CraftingMaterialTag[] secondaryTags;
+    public CraftingMaterialTag materialTag;
     public bool isStackable = true;
     public bool equipmentMaterial = true;
     public bool isAlloyable = false;

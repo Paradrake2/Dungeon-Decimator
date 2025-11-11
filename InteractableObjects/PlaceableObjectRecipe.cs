@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PlaceableObjectRecipe", menuName = "Scriptable Objects/PlaceableObjectRecipe")]
+[CreateAssetMenu(fileName = "PlaceableObjectRecipe", menuName = "Recipes/PlaceableObjectRecipe")]
 public class PlaceableObjectRecipe : BaseRecipe
 {
     public CraftingMaterial[] requiredMaterials;

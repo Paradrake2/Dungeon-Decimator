@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "ModularMonoItemRecipe", menuName = "Scriptable Objects/ModularMonoItemRecipe")]
+[CreateAssetMenu(fileName = "ModularMonoItemRecipe", menuName = "Recipes/ModularMonoItemRecipe")]
 public class ModularMonoItemRecipe : BaseRecipe
 {
     public CraftingMaterial resultMaterial;
@@ -61,6 +61,7 @@ public class ModularMonoItemRecipe : BaseRecipe
         {
             resultMaterial.itemColor = usedMaterials.First().Key.itemColor;
         }
+        resultMaterial.materialTag = usedMaterials.First().Key.materialTag;
         MaterialInventory.Instance.AddMaterial(resultMaterial, resultQuantity);
         CraftingManager.Instance.UpdateMaterialButton(resultMaterial);
     }

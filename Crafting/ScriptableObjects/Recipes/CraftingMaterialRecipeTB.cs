@@ -14,7 +14,7 @@ public class CraftingMaterialTBIngredient
 
 
 
-[CreateAssetMenu(fileName = "CraftingMaterialRecipeTB", menuName = "Scriptable Objects/CraftingMaterialRecipeTB")]
+[CreateAssetMenu(fileName = "CraftingMaterialRecipeTB", menuName = "Recipes/CraftingMaterialRecipeTB")]
 public class CraftingMaterialRecipeTB : BaseRecipe
 {
 

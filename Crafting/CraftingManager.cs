@@ -83,7 +83,10 @@ public class CraftingManager : MonoBehaviour
             {
                 UpdateMaterialButton(material);
             }
-        } 
+        } else
+        {
+            tempMaterials.Clear();
+        }
     }
 
     void AutoFillRecipe()
@@ -135,8 +138,10 @@ public class CraftingManager : MonoBehaviour
             var slot = slots[i];
             if (!slot.isOccupied && slot.CanAcceptMaterial(material))
             {
+                Debug.Log("Trying to add material");
                 if (currentProgress.TryAddMaterial(material, out int slotIndex))
                 {
+                    Debug.Log("Material added to recipe");
                     MaterialInventory.Instance.RemoveMaterial(material, 1);
                     slots[i].PlaceMaterialInSlot(material);
                     slots[i].CheckIfOccupied();
