@@ -18,6 +18,8 @@ public enum RecipeType
 public abstract class BaseRecipe : ScriptableObject
 {
     public Sprite icon;
+    public Color displayColor;
+    public bool useDisplayColor;
     public int levelRequirement = 1;
     public RecipeType recipeType;
     public GameObject recipeUIElementPrefab = null;

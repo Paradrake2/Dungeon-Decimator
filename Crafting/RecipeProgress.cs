@@ -78,7 +78,7 @@ public class RecipeProgress
                 {
                     slots.Add(new RecipeSlotData
                     {
-                        requiredTag = new CraftingMaterialTag[] { ingredient.materialTag },
+                        requiredTag = new CraftingMaterialTag[] { ingredient.materialTag},
                         isTagBased = true,
                         isFilled = false
                     });

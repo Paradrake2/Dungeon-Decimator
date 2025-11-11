@@ -99,6 +99,7 @@ public class CraftingUI : MonoBehaviour
             var button = Instantiate(recipeMaterialButtonPrefab, recipeListHolder);
             button.GetComponent<Button>().onClick.AddListener(() => OnRecipeButtonClick(recipe));
             button.GetComponent<Image>().sprite = recipe.icon;
+            if (recipe.useDisplayColor) button.GetComponent<Image>().color = recipe.displayColor;
             button.GetComponent<RecipeMaterialSlot>().cUI = this;
         }
     }
@@ -128,6 +129,7 @@ public class CraftingUI : MonoBehaviour
         if (recipe.icon != null) previewWindow.GetComponent<Image>().sprite = recipe.icon;
     }
 
+/**
     void GenerateEquipmentRecipeUI(EquipmentRecipe recipe)
     {
         GameObject container = new GameObject("RecipeHolder");
@@ -151,7 +153,7 @@ public class CraftingUI : MonoBehaviour
             tagSlot.SetupTagBasedSlot(requiredMaterial.materialTag, this);
         }
     }
-
+**/
     void GenerateMaterialRecipeUI(CraftingMaterialRecipe recipe)
     {
         foreach (var ingredient in recipe.ingredients)

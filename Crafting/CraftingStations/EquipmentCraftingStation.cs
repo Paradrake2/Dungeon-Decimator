@@ -8,7 +8,7 @@ public class EquipmentCraftingStation : CraftingStation
         List<CraftingMaterial> availableMaterials = new List<CraftingMaterial>();
         foreach (var material in Resources.LoadAll<CraftingMaterial>("Items"))
         {
-            if (material.equipmentMaterial) availableMaterials.Add(material);
+            availableMaterials.Add(material);
         }
         return availableMaterials;
     }
