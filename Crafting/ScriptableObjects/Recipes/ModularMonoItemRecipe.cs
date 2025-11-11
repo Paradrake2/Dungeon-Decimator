@@ -65,5 +65,34 @@ public class ModularMonoItemRecipe : BaseRecipe
         MaterialInventory.Instance.AddMaterial(resultMaterial, resultQuantity);
         CraftingManager.Instance.UpdateMaterialButton(resultMaterial);
     }
+    public override List<StatValue> GetPreviewStats(Dictionary<CraftingMaterial, int> placedMaterials)
+    {
+        List<StatValue> previewStats = new List<StatValue>();
+        List<StatValue> baseStats = baseMaterial.GetAllStats();
+        foreach (var material in placedMaterials)
+        {
+            List<StatValue> stats = material.Key.GetAllStats();
+            foreach (var stat in stats)
+            {
+                if (blacklistedStats != null && blacklistedStats.Contains(stat.StatType))
+                {
+                    continue;
+                }
+                var baseStat = baseStats.Find(s => s.StatType == stat.StatType);
+                if (baseStat != null)
+                {
+                    float addedValue = stat.Value * statMultiplier * material.Value;
+                    float newValue = baseStat.Value + addedValue;
+                    previewStats.Add(new StatValue(stat.StatType, newValue));
+                }
+                else
+                {
+                    float addedValue = stat.Value * statMultiplier * material.Value;
+                    previewStats.Add(new StatValue(stat.StatType, addedValue));
+                }
+            }
+        }
+        return previewStats;
+    }
 
 }

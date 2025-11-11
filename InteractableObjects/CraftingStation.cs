@@ -27,6 +27,7 @@ public abstract class CraftingStation : MonoBehaviour
         FindUI();
         Canvas canvas = FindFirstObjectByType<Canvas>();
         GameObject ui = Instantiate(craftingUI, canvas.transform);
+        if (ui.GetComponent<CraftingUI>() == null) Debug.LogError("Crafting UI prefab does not have a CraftingUI component attached.");
         ui.GetComponent<CraftingUI>().Initialize(this);
         stats.canAttack = false;
         currentUI = ui;

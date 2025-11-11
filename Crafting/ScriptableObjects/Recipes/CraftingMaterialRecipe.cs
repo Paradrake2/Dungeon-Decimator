@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -29,8 +30,11 @@ public class CraftingMaterialRecipe : BaseRecipe
     }
     public override void Craft()
     {
-
         MaterialInventory.Instance.AddMaterial(resultMaterial, resultQuantity);
         CraftingManager.Instance.UpdateMaterialButton(resultMaterial);
+    }
+    public override List<StatValue> GetPreviewStats(Dictionary<CraftingMaterial, int> placedMaterials)
+    {
+        return resultMaterial.GetAllStats();
     }
 }

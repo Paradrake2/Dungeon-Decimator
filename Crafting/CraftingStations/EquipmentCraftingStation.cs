@@ -10,6 +10,7 @@ public class EquipmentCraftingStation : CraftingStation
         {
             availableMaterials.Add(material);
         }
+        CraftedItemsCheck(availableMaterials, true);
         return availableMaterials;
     }
 

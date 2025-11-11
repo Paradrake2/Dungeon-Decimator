@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,12 +23,15 @@ public class CraftingUI : MonoBehaviour
     public GameObject materialInspector;
     public Dictionary<CraftingMaterial, int> tempMaterialInventory = new Dictionary<CraftingMaterial, int>();
     public GameObject materialInspectorButton;
+    public GameObject craftButton;
     public bool inspectMaterial = false;
     [SerializeField] private List<CraftingMaterial> craftingMaterials;
+    public TextMeshProUGUI statText;
 
     public void Initialize(CraftingStation station)
     {
         NullChecks();
+        Setup();
         craftingStation = station;
         craftingStationType = station.stationType;
         SetupCraftingArea(station);
@@ -36,6 +40,10 @@ public class CraftingUI : MonoBehaviour
         tempMaterialInventory.Clear();
 
         Instance = this;
+    }
+    void Setup()
+    {
+        craftButton.GetComponent<Button>().onClick.AddListener(() => CraftingManager.Instance.CraftSelectedRecipe());
     }
 
     public void ResetWindow()
@@ -55,6 +63,7 @@ public class CraftingUI : MonoBehaviour
         SetPreviewSprite();
         SetupCraftingArea(craftingStation);
         PopulateMaterialInventory(craftingStation);
+        statText.text = "";
     }
     void NullChecks()
     {
@@ -127,45 +136,28 @@ public class CraftingUI : MonoBehaviour
             recipe.GenerateDynamicUI(recipeListHolder, recipeMaterialButtonPrefab, this);
         }
         if (recipe.icon != null) previewWindow.GetComponent<Image>().sprite = recipe.icon;
+        UpdateMaterialButtonShaders();
     }
 
-/**
-    void GenerateEquipmentRecipeUI(EquipmentRecipe recipe)
+    void UpdateMaterialButtonShaders()
     {
-        GameObject container = new GameObject("RecipeHolder");
-        container.transform.SetParent(recipeListHolder, false);
-
-        var gridLayout = container.AddComponent<GridLayoutGroup>();
-        gridLayout.cellSize = new Vector2(100, 100);
-        gridLayout.spacing = new Vector2(5, 5);
-
-        foreach (var ingredient in recipe.ingredients)
+        var materialButtons = materialInventoryHolder.GetComponentsInChildren<MaterialButton>();
+        foreach (var button in materialButtons)
         {
-            CreateTagBasedSlots(container.transform, ingredient);
-        }
-    }
-    void CreateTagBasedSlots(Transform parent, EquipmentIngredient requiredMaterial)
-    {
-        for (int i = 0; i < requiredMaterial.quantity; i++)
-        {
-            GameObject slot = Instantiate(recipeMaterialButtonPrefab, parent);
-            var tagSlot = slot.GetComponent<RecipeMaterialSlot>();
-            tagSlot.SetupTagBasedSlot(requiredMaterial.materialTag, this);
-        }
-    }
-**/
-    void GenerateMaterialRecipeUI(CraftingMaterialRecipe recipe)
-    {
-        foreach (var ingredient in recipe.ingredients)
-        {
-            for (int i = 0; i < ingredient.quantity; i++)
+            for (int i = 0; i < CraftingManager.Instance.currentProgress.slots.Count; i++)
             {
-                GameObject slot = Instantiate(recipeMaterialButtonPrefab, recipeListHolder);
-                var materialSlot = slot.GetComponent<RecipeMaterialSlot>();
-                materialSlot.SetupSpecificMaterialSlot(ingredient.material, this);
-                
+                var slot = CraftingManager.Instance.currentProgress.slots[i];
+                bool canUse = CraftingManager.Instance.currentProgress.CanMaterialFitSlot(button.material, slot);
+                if (canUse)
+                {
+                    button.DeactivateShader();
+                    break;
+                }
+                else
+                {
+                    button.ActivateShader();
+                }
             }
-            tempMaterialInventory.AddRange(recipe.ingredients.ToDictionary(ing => ing.material, ing => ing.quantity));
         }
     }
     bool IsUnlocked(BaseRecipe recipe)
@@ -195,67 +187,13 @@ public class CraftingUI : MonoBehaviour
         inspectMaterial = !inspectMaterial;
         materialInspectorButton.GetComponent<Image>().color = inspectMaterial ? Color.green : Color.white;
     }
-    
-    /**
-    void SetupTagBasedSlots(CraftingStation station)
+    public void UpdateStats()
     {
-        foreach (var recipe in station.GetAvailableRecipes())
+        if (!CraftingManager.Instance.currentProgress.IsComplete()) return;
+        var stats = CraftingManager.Instance.currentProgress.GetPreviewStats();
+        foreach (var stat in stats)
         {
-            if (!IsUnlocked(recipe)) continue;
-            var button = Instantiate(recipeMaterialButtonPrefab, recipeListHolder);
-            button.GetComponent<Button>().onClick.AddListener(() => OnRecipeButtonClick(recipe));
-            button.GetComponent<Image>().sprite = recipe.icon;
+            statText.text += $"{stat.StatType}: {stat.Value}\n";
         }
     }
-    
-    void SetupSpecificMaterialSlots(CraftingStation station)
-    {
-        foreach (var recipe in station.GetAvailableRecipes())
-        {
-            if (!IsUnlocked(recipe)) continue;
-            var button = Instantiate(recipeMaterialButtonPrefab, recipeListHolder);
-            button.GetComponent<Button>().onClick.AddListener(() => OnRecipeButtonClick(recipe));
-            button.GetComponent<Image>().sprite = recipe.icon;
-        }
-    }
-    void SetupMaterialInventory()
-    {
-        foreach (var material in inventory.materials)
-        {
-            var button = Instantiate(materialButtonPrefab, materialInventoryHolder);
-            button.GetComponent<MaterialButton>().Initialize(material.material, material.amount, button.transform.parent);
-        }
-    }
-    void SetupEquipmentInventory()
-    {
-        foreach (var material in inventory.materials)
-            {
-                if (material.material.equipmentMaterial)
-                {
-                    var button = Instantiate(materialButtonPrefab, materialInventoryHolder);
-                    button.GetComponent<MaterialButton>().Initialize(material.material, material.amount, button.transform.parent);
-                }
-            }
-    }
-    void SetupMaterialCrafter()
-    {
-        foreach (var recipe in Resources.LoadAll<CraftingMaterialRecipe>("Recipes/CraftingMaterials"))
-        {
-            if (!IsUnlocked(recipe)) continue;
-            var button = Instantiate(recipeMaterialButtonPrefab, recipeListHolder);
-            button.GetComponent<Button>().onClick.AddListener(() => OnRecipeButtonClick(recipe));
-            button.GetComponent<Image>().sprite = recipe.icon;
-        }
-    }
-    void SetupEquipmentCrafter()
-    {
-        foreach (var recipe in Resources.LoadAll<EquipmentRecipe>("Recipes/EquipmentRecipes"))
-        {
-            if (!IsUnlocked(recipe)) continue;
-            var button = Instantiate(recipeMaterialButtonPrefab, recipeListHolder);
-            button.GetComponent<Button>().onClick.AddListener(() => OnRecipeButtonClick(recipe));
-            button.GetComponent<Image>().sprite = recipe.icon;
-        }
-    }
-    **/
 }

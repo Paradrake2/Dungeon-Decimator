@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "PlaceableObjectRecipe", menuName = "Recipes/PlaceableObjectRecipe")]
@@ -25,5 +26,9 @@ public class PlaceableObjectRecipe : BaseRecipe
             MaterialInventory.Instance.RemoveMaterial(material, 1);
         }
         // Logic to add the placeable object to the player's inventory would go here.
+    }
+    public override List<StatValue> GetPreviewStats(Dictionary<CraftingMaterial, int> placedMaterials)
+    {
+        return null;
     }
 }

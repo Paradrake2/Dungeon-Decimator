@@ -222,7 +222,7 @@ public class RecipeProgress
         }
     }
 
-    bool CanMaterialFitSlot(CraftingMaterial material, RecipeSlotData slot)
+    public bool CanMaterialFitSlot(CraftingMaterial material, RecipeSlotData slot)
     {
         if (slot.isDynamicSlot)
         {
@@ -289,6 +289,11 @@ public class RecipeProgress
     public Dictionary<CraftingMaterial, int> GetRequiredMaterials()
     {
         return new Dictionary<CraftingMaterial, int>(placedMaterials);
+    }
+
+    public List<StatValue> GetPreviewStats()
+    {
+        return recipe.GetPreviewStats(placedMaterials);
     }
 
 }

@@ -8,6 +8,7 @@ public class MaterialButton : MonoBehaviour
     public Image icon;
     public TextMeshProUGUI amountText;
     public CraftingUI cUI;
+    public Image overlay;
     public void Initialize(CraftingMaterial material, int amount, Transform parent, CraftingUI _cUI)
     {
         this.material = material;
@@ -17,6 +18,7 @@ public class MaterialButton : MonoBehaviour
         amountText.text = amount.ToString();
         this.amount = amount;
         transform.SetParent(parent);
+        overlay.gameObject.SetActive(false);
 
         GetComponent<Button>().onClick.AddListener(OnClick);
     }
@@ -28,6 +30,7 @@ public class MaterialButton : MonoBehaviour
             return;
         }
         CraftingManager.Instance.TryAddMaterialToRecipe(material);
+        cUI.UpdateStats();
     }
     public void UpdateAmount(int newAmount)
     {
@@ -53,6 +56,14 @@ public class MaterialButton : MonoBehaviour
     {
         amountText.text = amount.ToString();
         gameObject.SetActive(amount > 0);
+    }
+    public void ActivateShader()
+    {
+        overlay.gameObject.SetActive(true);
+    }
+    public void DeactivateShader()
+    {
+        overlay.gameObject.SetActive(false);
     }
     void Start()
     {

@@ -73,15 +73,17 @@ public class CraftingMaterialRecipeTB : BaseRecipe
             {
                 GameObject slot = Instantiate(slotPrefab, parent);
                 var materialSlot = slot.GetComponent<RecipeMaterialSlot>();
-                if (ingredient.specificMaterial != null && (ingredient.materialTag == null || ingredient.useTag == false ))
+                if (ingredient.specificMaterial != null && (ingredient.materialTag == null || ingredient.useTag == false))
                 {
                     materialSlot.SetupSpecificMaterialSlot(ingredient.specificMaterial, cUI);
                     continue;
-                } else if (ingredient.materialTag != null && ingredient.specificMaterial == null)
+                }
+                else if (ingredient.materialTag != null && ingredient.specificMaterial == null)
                 {
                     materialSlot.SetupTagBasedSlot(ingredient.materialTag, cUI);
                     continue;
-                } else if (ingredient.materialTag != null && ingredient.specificMaterial != null)
+                }
+                else if (ingredient.materialTag != null && ingredient.specificMaterial != null)
                 {
                     materialSlot.SetupSpecificTagMaterialSlot(ingredient.specificMaterial, ingredient.materialTag, cUI);
                     continue;
@@ -89,5 +91,34 @@ public class CraftingMaterialRecipeTB : BaseRecipe
 
             }
         }
+    }
+    public override List<StatValue> GetPreviewStats(Dictionary<CraftingMaterial, int> placedMaterials)
+    {
+        List<StatValue> previewStats = new List<StatValue>();
+        List<StatValue> baseStats = baseMaterial.GetAllStats();
+        foreach (var material in placedMaterials)
+        {
+            List<StatValue> stats = material.Key.GetAllStats();
+            foreach (var stat in stats)
+            {
+                if (blacklistedStats != null && blacklistedStats.Contains(stat.StatType))
+                {
+                    continue;
+                }
+                var baseStat = baseStats.Find(s => s.StatType == stat.StatType);
+                if (baseStat != null)
+                {
+                    float addedValue = stat.Value * statMultiplier * material.Value;
+                    float newValue = baseStat.Value + addedValue;
+                    previewStats.Add(new StatValue(stat.StatType, newValue));
+                }
+                else
+                {
+                    float addedValue = stat.Value * statMultiplier * material.Value;
+                    previewStats.Add(new StatValue(stat.StatType, addedValue));
+                }
+            }
+        }
+        return previewStats;
     }
 }

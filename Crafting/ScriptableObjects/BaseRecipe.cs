@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -24,10 +25,11 @@ public abstract class BaseRecipe : ScriptableObject
     public RecipeType recipeType;
     public GameObject recipeUIElementPrefab = null;
     public bool isTagBased = false;
-    public RecipeCategory recipeCategory;
+    public RecipeCategory[] recipeCategory;
 
     public abstract void GenerateDynamicUI(Transform parent, GameObject slotPrefab, CraftingUI cUI);
     public abstract void Craft();
+    public abstract List<StatValue> GetPreviewStats(Dictionary<CraftingMaterial, int> placedMaterials);
     public CraftingMaterialTag[] GetTags(CraftingMaterial craftingMaterial)
     {
         return craftingMaterial.tags;

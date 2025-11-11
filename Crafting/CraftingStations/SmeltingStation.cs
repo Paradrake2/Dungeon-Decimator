@@ -19,7 +19,7 @@ public class SmeltingStation : CraftingStation
         List<BaseRecipe> availableRecipes = new List<BaseRecipe>();
         foreach (var recipe in Resources.LoadAll<BaseRecipe>("Recipes/CraftingMaterials"))
         {
-            if (recipe.levelRequirement <= stats.GetStatValue("Level") && recipe.recipeCategory.categoryName == "oreSmelting")
+            if (recipe.levelRequirement <= stats.GetStatValue("Level") && recipe.recipeCategory.Any(category => category.categoryName == "oreSmelting"))
             {
                 availableRecipes.Add(recipe);
             }

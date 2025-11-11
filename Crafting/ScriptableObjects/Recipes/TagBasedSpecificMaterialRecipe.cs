@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -35,5 +36,10 @@ public class TagBasedSpecificMaterialRecipe : BaseRecipe
                 materialSlot.SetupMultiTagBaseSlot(ingredient.materialTags, cUI, ingredient.specificMaterial, ingredient.materialTypeTag);
             }
         }
+    }
+    public override List<StatValue> GetPreviewStats(Dictionary<CraftingMaterial, int> placedMaterials)
+    {
+        // Implement preview stats logic if needed
+        return null;
     }
 }

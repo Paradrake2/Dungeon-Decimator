@@ -70,4 +70,30 @@ public class EquipmentRecipe : BaseRecipe
         EquipmentManager.Instance.AddToInventory(resultEquipment);
         EquipmentManager.Instance.EquipItem(resultEquipment);
     }
+    public override List<StatValue> GetPreviewStats(Dictionary<CraftingMaterial, int> placedMaterials)
+    {
+        List<StatValue> previewStats = new List<StatValue>();
+        List<StatValue> baseStats = baseEquipment.GetAllStats();
+        foreach (var material in placedMaterials)
+        {
+            List<StatValue> stats = material.Key.GetAllStats();
+            foreach (var stat in stats)
+            {
+                var baseStat = baseStats.Find(s => s.StatType == stat.StatType);
+                if (baseStat != null)
+                {
+                    float addedValue = stat.Value * statMultiplier * material.Value;
+                    float newValue = baseStat.Value + addedValue;
+                    previewStats.Add(new StatValue(stat.StatType, newValue));
+                }
+                else
+                {
+                    float addedValue = stat.Value * statMultiplier * material.Value;
+                    previewStats.Add(new StatValue(stat.StatType, addedValue));
+                }
+            }
+        }
+        return previewStats;
+    }
 }
+

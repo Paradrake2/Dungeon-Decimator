@@ -197,6 +197,10 @@ public class RecipeMaterialSlot : MonoBehaviour
         {
             slotButton.onClick.AddListener(OnSlotClicked);
         }
+        if (cUI == null)
+        {
+            cUI = FindAnyObjectByType<CraftingUI>();
+        }
     }
     void OnSlotClicked()
     {
