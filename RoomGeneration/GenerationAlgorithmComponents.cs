@@ -17,6 +17,14 @@ public static class WallVectorDirections
     };
 }
 
+public enum TileContentType
+{
+    None,
+    Trap,
+    Enemy,
+    Obstacle,
+    Resource
+}
 
 
 // This big class contains static helper methods for generation algorithms
@@ -40,12 +48,32 @@ public static class GenerationAlgorithmComponents
     }
     public static void GenerateContents(RoomData rd, HashSet<Vector2Int> floorPositions)
     {
-        
+        foreach(var pos in floorPositions)
+        {
+            TileContentType contentType = GetTileContent(rd);
+            switch (contentType)
+            {
+                case TileContentType.Enemy:
+                    SpawnEnemy(rd, pos);
+                    break;
+                case TileContentType.Obstacle:
+                    SpawnObstacle(rd, pos);
+                    break;
+                case TileContentType.Trap:
+                    SpawnTrap(rd, pos);
+                    break;
+                case TileContentType.Resource:
+                    SpawnResource(rd, pos);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
     public static void GenerateWalls(HashSet<Vector2Int> floorPositions, RoomData rd, Tilemap map)
     {
         HashSet<Vector2Int> basicWallPos = FindWallsInDirections(floorPositions);
-        if (test)
+        if (!rd.useRuleTile)
         {
             foreach (var pos in basicWallPos)
             {
@@ -100,10 +128,7 @@ public static class GenerationAlgorithmComponents
         {
             foreach (var pos in basicWallPos)
             {
-                if (rd.roomEnv.wallTile.ruleTile is CustomWallRuleTile ruleTile)
-                {
-                    ruleTile.SetFloorTiles(rd.roomEnv.floorTile);
-                }
+                PlaceSingleTile(map, rd.roomEnv.floorTile[Random.Range(0, rd.roomEnv.floorTile.Length)], pos, rd);
                 PlaceSingleTile(map, rd.roomEnv.wallTile.ruleTile, pos, rd);
             }
         }
@@ -166,9 +191,93 @@ public static class GenerationAlgorithmComponents
             case RoomAttribute.Wind:
                 return Color.green;
             case RoomAttribute.Normal:
-                return Color.clear;
+                return Color.white;
             default:
                 return Color.white;
         }
     }
+    public static void SpawnEnemy(RoomData rd, Vector2Int position)
+    {
+        List<EnemyDefinition> potentialEnemies = rd.GetPotentialEnemies();
+        EnemyRarity selectedRarity = GetEnemyRarity(rd);
+        potentialEnemies.RemoveAll(e => e.enemyRarity != selectedRarity);
+        if (potentialEnemies.Count == 0) return;
+        EnemyDefinition enemyToSpawn = potentialEnemies[Random.Range(0, potentialEnemies.Count)];
+        GameObject newEnemy = GameObject.Instantiate(enemyToSpawn.enemyPrefab, new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity);
+    }
+    public static void SpawnObstacle(RoomData rd, Vector2Int position)
+    {
+        List<GameObject> potentialObstacles = rd.GetPotentialObstacles();
+        if (potentialObstacles.Count == 0) return;
+        GameObject obstacleToSpawn = potentialObstacles[Random.Range(0, potentialObstacles.Count)];
+        GameObject newObstacle = GameObject.Instantiate(obstacleToSpawn, new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity);
+    }
+    public static void SpawnTrap(RoomData rd, Vector2Int position)
+    {
+        List<GameObject> potentialTraps = rd.GetPotentialTraps();
+        if (potentialTraps.Count == 0) return;
+        GameObject trapToSpawn = potentialTraps[Random.Range(0, potentialTraps.Count)];
+        GameObject newTrap = GameObject.Instantiate(trapToSpawn, new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity);
+    }
+    public static void SpawnResource(RoomData rd, Vector2Int position)
+    {
+        List<ResourceWeights> potentialResources = rd.GetPotentialResources();
+        if (potentialResources.Count == 0) return;
+        int totalWeight = 0;
+        foreach (var res in potentialResources)
+        {
+            totalWeight += res.weight;
+        }
+        int randomValue = Random.Range(0, totalWeight);
+        int cumulativeWeight = 0;
+        foreach (var res in potentialResources)
+        {
+            cumulativeWeight += res.weight;
+            if (randomValue <= cumulativeWeight)
+            {
+                GameObject newResource = GameObject.Instantiate(res.resourcePrefab, new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity);
+                break;
+            }
+        }
+    }
+    public static TileContentType GetTileContent(RoomData rd)
+    {
+        int totalWeight = 0;
+        foreach (var tcw in rd.tileContentWeights)
+        {
+            totalWeight += tcw.weight;
+        }
+        int randomValue = Random.Range(0, totalWeight);
+        int cumulativeWeight = 0;
+        foreach (var tcw in rd.tileContentWeights)
+        {
+            cumulativeWeight += tcw.weight;
+            if (randomValue <= cumulativeWeight)
+            {
+                return tcw.tileContentType;
+            }
+        }
+        return TileContentType.None;
+    }
+    public static EnemyRarity GetEnemyRarity(RoomData rd)
+    {
+        EnemyDefinition[] potentialEnemies = rd.potentialEnemies.GetPotentialEnemies();
+        int totalWeight = 0;
+        foreach (var weight in rd.enemyRarityWeights)
+        {
+            totalWeight += weight.weight;
+        }
+        int randomValue = Random.Range(0, totalWeight);
+        int cumulativeWeight = 0;
+        foreach (var weight in rd.enemyRarityWeights)
+        {
+            cumulativeWeight += weight.weight;
+            if (randomValue <= cumulativeWeight)
+            {
+                return weight.enemyRarity;
+            }
+        }
+        return EnemyRarity.Common; // Default return value if none matched
+    }
+
 }

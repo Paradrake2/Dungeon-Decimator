@@ -7,13 +7,31 @@ public class EnemySpawnHolder
 {
     public List<GameObject> enemyPrefabs;
 }
-
+[System.Serializable]
+public class ResourceWeights
+{
+    public GameObject resourcePrefab;
+    public int weight = 1;
+}
 [System.Serializable]
 public class RoomContents
 {
-    public List<GameObject> potentialResources;
+    public List<ResourceWeights> potentialResources;
     public List<GameObject> potentialObstacles;
     public List<GameObject> potentialTraps;
+    public List<EnemyDefinition> potentialEnemies;
+}
+[System.Serializable]
+public class EnemyRarityWeight
+{
+    public EnemyRarity enemyRarity;
+    public int weight = 1;
+}
+[System.Serializable]
+public class TileContentWeights
+{
+    public TileContentType tileContentType;
+    public int weight = 1;
 }
 
 public enum RoomBiome
@@ -45,6 +63,9 @@ public abstract class RoomData : ScriptableObject
     public int tier;
     public RoomEnvironment roomEnv;
     public RoomContents roomContents;
+    public EnemyRarityWeight[] enemyRarityWeights;
+    public PotentialEnemiesHolder potentialEnemies;
+    public TileContentWeights[] tileContentWeights;
     public RoomAttribute roomAttribute;
     public RoomBiome roomBiome;
     public GenerationAlgorithm generationAlgorithm;
@@ -52,6 +73,45 @@ public abstract class RoomData : ScriptableObject
     public int height = 1;
     public int enemyCapacity;
     public float obstacleDensity;
+    public bool useRuleTile = true;
 
     public abstract void GenerateRoom();
+    public int GetEnemyRarityWeight(EnemyRarity rarity)
+    {
+        foreach (var erw in enemyRarityWeights)
+        {
+            if (erw.enemyRarity == rarity)
+            {
+                return erw.weight;
+            }
+        }
+        return 0;
+    }
+    public int GetTileContentWeight(TileContentType tileContentType)
+    {
+        foreach (var tcw in tileContentWeights)
+        {
+            if (tcw.tileContentType == tileContentType)
+            {
+                return tcw.weight;
+            }
+        }
+        return 0;
+    }
+    public List<ResourceWeights> GetPotentialResources()
+    {
+        return roomContents.potentialResources;
+    }
+    public List<GameObject> GetPotentialObstacles()
+    {
+        return roomContents.potentialObstacles;
+    }
+    public List<GameObject> GetPotentialTraps()
+    {
+        return roomContents.potentialTraps;
+    }
+    public List<EnemyDefinition> GetPotentialEnemies()
+    {
+        return roomContents.potentialEnemies;
+    }
 }

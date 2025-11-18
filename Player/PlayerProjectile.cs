@@ -71,7 +71,6 @@ public class PlayerProjectile : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         transform.position += transform.up * speed * Time.deltaTime;
@@ -89,9 +88,13 @@ public class PlayerProjectile : MonoBehaviour
                 Debug.Log("Enemy hit for " + damage + " damage!");
             }
             Destroy(gameObject);
+        } else if (other.tag == "Obstacle")
+        {
+            Destroy(gameObject);
         }
     }
-
+    // Damage calculation with attribute interactions
+    // Returns final damage after applying attribute multipliers
     float CalculateDamage(EnemyStats stats, float damage)
     {
         float damageAfterMult = damage;
