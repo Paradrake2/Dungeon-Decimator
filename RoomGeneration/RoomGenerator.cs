@@ -28,7 +28,8 @@ public class RoomGenerator : MonoBehaviour
     public GameObject testObject;
     private List<RoomData> dungeonRooms = new List<RoomData>();
     private RoomData currentRoom;
-    public Tilemap map;
+    public Tilemap floorMap;
+    public Tilemap wallMap;
     public GameObject playerObject;
 
     public void SetIsBoss(bool isBoss)
@@ -47,7 +48,8 @@ public class RoomGenerator : MonoBehaviour
     public void LoadDungeon()
     {
         currentRoom = null;
-        map.ClearAllTiles();
+        floorMap.ClearAllTiles();
+        wallMap.ClearAllTiles();
         if (dungeonRooms.Count > 0)
         {
             int randomIndex = Random.Range(0, dungeonRooms.Count);

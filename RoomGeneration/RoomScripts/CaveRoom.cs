@@ -7,6 +7,7 @@ public class CaveRoom : RoomData
     public int maxRooms = 3;
     public int walkLength = 10;
     public int iterations = 10;
+    public bool startRandomlyEachIteration = true;
     public override void GenerateRoom()
     {
         if (generationAlgorithm != null)
