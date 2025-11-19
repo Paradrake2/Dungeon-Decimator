@@ -102,7 +102,7 @@ public class BasicSpiderAI : EnemyAI
     void Start()
     {
         animator.SetBool("facingDown", true);
-        player = FindFirstObjectByType<Player>().transform;
+        BaseStart();
     }
 
 

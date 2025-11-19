@@ -13,14 +13,22 @@ public class NodeGrid : MonoBehaviour
 
     private void Awake()
     {
+        //nodeDiameter = nodeRadius * 2;
+        //gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
+        //gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
+        //CreateGrid();
+    }
+
+    public void SetGridSize(Vector2Int size)
+    {
+        gridWorldSize = size;
         nodeDiameter = nodeRadius * 2;
         gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
         gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
-        CreateGrid();
     }
-
-    void CreateGrid()
+    public void CreateGrid(HashSet<Vector2Int> wallPos)
     {
+        Debug.LogWarning("CREATING GRID");
         grid = new Node[gridSizeX, gridSizeY];
         Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.up * gridWorldSize.y / 2;
 
@@ -34,7 +42,30 @@ public class NodeGrid : MonoBehaviour
             }
         }
     }
-
+    public void SetUnwalkable(Vector2Int wallTilePos)
+{
+    // Each tile is 1x1 unit, so we need to check all nodes within this area
+    Vector3 tileBottomLeft = new Vector3(wallTilePos.x, wallTilePos.y, 0);
+    Vector3 tileTopRight = new Vector3(wallTilePos.x + 1f, wallTilePos.y + 1f, 0);
+    
+    // Find all nodes within the tile bounds
+    for (int x = 0; x < gridSizeX; x++)
+    {
+        for (int y = 0; y < gridSizeY; y++)
+        {
+            Node node = grid[x, y];
+            
+            // Check if this node's world position is within the wall tile
+            if (node.worldPosition.x >= tileBottomLeft.x && 
+                node.worldPosition.x < tileTopRight.x &&
+                node.worldPosition.y >= tileBottomLeft.y && 
+                node.worldPosition.y < tileTopRight.y)
+            {
+                node.walkable = false;
+            }
+        }
+    }
+}
     public int MaxSize => gridSizeX * gridSizeY;
 
     public List<Node> GetNeighbors(Node node)
@@ -63,19 +94,26 @@ public class NodeGrid : MonoBehaviour
 
     public Node NodeFromWorldPoint(Vector3 worldPosition)
     {
-        float percentX = (worldPosition.x + gridWorldSize.x / 2) / gridWorldSize.x;
-        float percentY = (worldPosition.y + gridWorldSize.y / 2) / gridWorldSize.y;
-        percentX = Mathf.Clamp01(percentX);
-        percentY = Mathf.Clamp01(percentY);
-
-        int x = Mathf.RoundToInt((gridSizeX - 1) * percentX);
-        int y = Mathf.RoundToInt((gridSizeY - 1) * percentY);
+        // Calculate bottom-left corner of the grid
+        Vector3 worldBottomLeft = transform.position - Vector3.right * gridWorldSize.x / 2 - Vector3.up * gridWorldSize.y / 2;
+        
+        // Convert world position to local grid coordinates
+        Vector3 localPosition = worldPosition - worldBottomLeft;
+        
+        // Calculate grid indices directly from local position
+        int x = Mathf.FloorToInt(localPosition.x / nodeDiameter);
+        int y = Mathf.FloorToInt(localPosition.y / nodeDiameter);
+        
+        // Clamp to grid bounds
+        x = Mathf.Clamp(x, 0, gridSizeX - 1);
+        y = Mathf.Clamp(y, 0, gridSizeY - 1);
+        
         return grid[x, y];
     }
 
     public List<Node> path;
     
-    /**
+    
     void OnDrawGizmos()
     {
         Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, gridWorldSize.y));
@@ -97,5 +135,5 @@ public class NodeGrid : MonoBehaviour
             }
         }
     }
-    **/
+    
 }

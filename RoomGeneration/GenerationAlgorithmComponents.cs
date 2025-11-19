@@ -69,6 +69,38 @@ public static class GenerationAlgorithmComponents
                     break;
             }
         }
+        
+    }
+    public static void GenerateNodeGrid(RoomData rd, HashSet<Vector2Int> floorPositions)
+    {
+        rd.SetNodeGrid();
+        Vector2Int size = CalculateRoomDimensions(floorPositions);
+        Vector2 center = CalculateRoomCenter(floorPositions);
+        rd.nodeGridPrefab.transform.position = new Vector3(center.x + 0.5f, center.y+ 0.5f, 0);
+        rd.nodeGridPrefab.SetGridSize(size);
+        rd.nodeGridPrefab.CreateGrid(floorPositions);
+    }
+    public static Vector2 CalculateRoomCenter(HashSet<Vector2Int> floorPositions)
+    {
+        if (floorPositions.Count == 0) return Vector2.zero;
+        
+        int minX = int.MaxValue;
+        int maxX = int.MinValue;
+        int minY = int.MaxValue;
+        int maxY = int.MinValue;
+        
+        foreach (Vector2Int pos in floorPositions)
+        {
+            if (pos.x < minX) minX = pos.x;
+            if (pos.x > maxX) maxX = pos.x;
+            if (pos.y < minY) minY = pos.y;
+            if (pos.y > maxY) maxY = pos.y;
+        }
+        
+        float centerX = (minX + maxX) / 2f;
+        float centerY = (minY + maxY) / 2f;
+        
+        return new Vector2(centerX, centerY);
     }
     public static void GenerateWalls(HashSet<Vector2Int> floorPositions, RoomData rd, Tilemap map)
     {
@@ -123,6 +155,7 @@ public static class GenerationAlgorithmComponents
                     wallTileToPlace = rd.roomEnv.wallTile.single[Random.Range(0, rd.roomEnv.wallTile.single.Length)];
                 }
                 PlaceSingleTile(map, wallTileToPlace, pos, rd);
+                rd.nodeGridPrefab.SetUnwalkable(pos);
             }
         } else
         {
@@ -130,6 +163,7 @@ public static class GenerationAlgorithmComponents
             {
                 PlaceSingleTile(map, rd.roomEnv.floorTile[Random.Range(0, rd.roomEnv.floorTile.Length)], pos, rd);
                 PlaceSingleTile(map, rd.roomEnv.wallTile.ruleTile, pos, rd);
+                rd.nodeGridPrefab.SetUnwalkable(pos);
             }
         }
     }
@@ -198,7 +232,8 @@ public static class GenerationAlgorithmComponents
     }
     public static void SpawnEnemy(RoomData rd, Vector2Int position)
     {
-        List<EnemyDefinition> potentialEnemies = rd.GetPotentialEnemies();
+        PotentialEnemiesHolder potE = rd.GetPotentialEnemies();
+        List<EnemyDefinition> potentialEnemies = new List<EnemyDefinition>(potE.GetPotentialEnemies());
         EnemyRarity selectedRarity = GetEnemyRarity(rd);
         potentialEnemies.RemoveAll(e => e.enemyRarity != selectedRarity);
         if (potentialEnemies.Count == 0) return;
@@ -261,7 +296,6 @@ public static class GenerationAlgorithmComponents
     }
     public static EnemyRarity GetEnemyRarity(RoomData rd)
     {
-        EnemyDefinition[] potentialEnemies = rd.potentialEnemies.GetPotentialEnemies();
         int totalWeight = 0;
         foreach (var weight in rd.enemyRarityWeights)
         {
@@ -279,5 +313,26 @@ public static class GenerationAlgorithmComponents
         }
         return EnemyRarity.Common; // Default return value if none matched
     }
-
+    public static Vector2Int CalculateRoomDimensions(HashSet<Vector2Int> floorPositions)
+    {
+        if (floorPositions.Count == 0) return Vector2Int.zero;
+        
+        int minX = int.MaxValue;
+        int maxX = int.MinValue;
+        int minY = int.MaxValue;
+        int maxY = int.MinValue;
+        
+        foreach (Vector2Int pos in floorPositions)
+        {
+            if (pos.x < minX) minX = pos.x;
+            if (pos.x > maxX) maxX = pos.x;
+            if (pos.y < minY) minY = pos.y;
+            if (pos.y > maxY) maxY = pos.y;
+        }
+        
+        int width = maxX - minX + 1;
+        int height = maxY - minY + 1;
+        
+        return new Vector2Int(width + 2, height + 2); // additional 2 is for the edges of the map
+    }
 }

@@ -19,7 +19,7 @@ public class RoomContents
     public List<ResourceWeights> potentialResources;
     public List<GameObject> potentialObstacles;
     public List<GameObject> potentialTraps;
-    public List<EnemyDefinition> potentialEnemies;
+    public PotentialEnemiesHolder potentialEnemies;
 }
 [System.Serializable]
 public class EnemyRarityWeight
@@ -64,7 +64,6 @@ public abstract class RoomData : ScriptableObject
     public RoomEnvironment roomEnv;
     public RoomContents roomContents;
     public EnemyRarityWeight[] enemyRarityWeights;
-    public PotentialEnemiesHolder potentialEnemies;
     public TileContentWeights[] tileContentWeights;
     public RoomAttribute roomAttribute;
     public RoomBiome roomBiome;
@@ -74,7 +73,7 @@ public abstract class RoomData : ScriptableObject
     public int enemyCapacity;
     public float obstacleDensity;
     public bool useRuleTile = true;
-
+    public NodeGrid nodeGridPrefab;
     public abstract void GenerateRoom();
     public int GetEnemyRarityWeight(EnemyRarity rarity)
     {
@@ -110,8 +109,12 @@ public abstract class RoomData : ScriptableObject
     {
         return roomContents.potentialTraps;
     }
-    public List<EnemyDefinition> GetPotentialEnemies()
+    public PotentialEnemiesHolder GetPotentialEnemies()
     {
         return roomContents.potentialEnemies;
+    }
+    public void SetNodeGrid()
+    {
+        nodeGridPrefab = FindAnyObjectByType<NodeGrid>();
     }
 }

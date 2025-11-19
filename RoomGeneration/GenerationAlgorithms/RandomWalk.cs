@@ -21,9 +21,10 @@ public class RandomWalk : GenerationAlgorithm
             startRandomlyEachIteration = caveRoom.startRandomlyEachIteration;
         }
         HashSet<Vector2Int> floorPositions = GenerateRoomBase();
+        Debug.LogWarning(startPos);
         gac.PlaceFloorTile(floorPositions, rd, floorMap);
+        gac.GenerateNodeGrid(rd, floorPositions);
         gac.GenerateWalls(floorPositions, rd, wallMap);
-
         gac.GenerateContents(rd, floorPositions);
     }
     public HashSet<Vector2Int> GenerateRoomBase()

@@ -30,13 +30,31 @@ public abstract class EnemyAI : MonoBehaviour
 
     [Header("Animation")]
     public Animator animator;
+    [SerializeField] private float enemyRadius;
     void Start()
     {
         stats = GetComponent<EnemyStats>();
         player = FindFirstObjectByType<Player>().transform;
         obstacleLayer = LayerMask.GetMask("Obstacle");
+        var collider = this.gameObject.GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            Debug.LogWarning("CALLED");
+            enemyRadius = collider.bounds.size.magnitude / 2f;
+        }
     }
-
+    public void BaseStart()
+    {
+        stats = GetComponent<EnemyStats>();
+        player = FindFirstObjectByType<Player>().transform;
+        obstacleLayer = LayerMask.GetMask("Obstacle");
+        var collider = this.gameObject.GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            Debug.LogWarning("CALLED");
+            enemyRadius = collider.bounds.size.magnitude / 2f;
+        }
+    }
     public virtual void Update()
     {
         if (Time.time - lastPathfindingTime > pathfindingUpdateInterval)
@@ -55,8 +73,10 @@ public abstract class EnemyAI : MonoBehaviour
     }
     void CheckIfPathfindingNeeded()
     {
+        
         RaycastHit2D hit = Physics2D.Raycast(transform.position, (player.position - transform.position).normalized, Vector3.Distance(transform.position, player.position), obstacleLayer);
         usePathfinding = hit.collider != null;
+        Debug.Log(usePathfinding);
         if (usePathfinding)
         {
             RequestNewPath();
@@ -77,8 +97,7 @@ public abstract class EnemyAI : MonoBehaviour
 
     public void RequestNewPath()
     {
-        PathRequestManager.RequestPath(transform.position, player.position, OnPathFound);
-        Debug.Log("Path requested");
+        PathRequestManager.RequestPath(transform.position, player.position, OnPathFound, enemyRadius);
     }
     void OnPathFound(Vector3[] newPath, bool pathSuccessful)
     {

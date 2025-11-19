@@ -13,6 +13,7 @@ public abstract class CraftingStation : MonoBehaviour
     public PlayerStats stats;
     public virtual void Interact()
     {
+        Debug.Log("INTERACT");
         OpenCraftingUI();
     }
     void FindUI()

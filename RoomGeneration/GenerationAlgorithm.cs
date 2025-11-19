@@ -17,4 +17,10 @@ public abstract class GenerationAlgorithm : ScriptableObject
         floorMap = FindObjectsByType<Tilemap>(FindObjectsSortMode.None).Where(t => t.gameObject.name == "FloorTilemap").FirstOrDefault();
         wallMap = FindObjectsByType<Tilemap>(FindObjectsSortMode.None).Where(t => t.gameObject.name == "WallTilemap").FirstOrDefault();
     }
+    public void ClearMaps()
+    {
+        floorMap.ClearAllTiles();
+        wallMap.ClearAllTiles();
+    }
+    
 }
