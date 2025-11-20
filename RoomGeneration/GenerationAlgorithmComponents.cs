@@ -246,6 +246,7 @@ public static class GenerationAlgorithmComponents
         if (potentialObstacles.Count == 0) return;
         GameObject obstacleToSpawn = potentialObstacles[Random.Range(0, potentialObstacles.Count)];
         GameObject newObstacle = GameObject.Instantiate(obstacleToSpawn, new Vector3(position.x + 0.5f, position.y + 0.5f, 0), Quaternion.identity);
+        rd.nodeGridPrefab.SetUnwalkable(position);
     }
     public static void SpawnTrap(RoomData rd, Vector2Int position)
     {

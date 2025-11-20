@@ -55,7 +55,7 @@ public class Player : MonoBehaviour
         stats.SetStatValue("Health", health);
         UpdateHealth();
     }
-
+    
     void Start()
     {
 
