@@ -7,7 +7,8 @@ public enum EquipmentType
     Helmet,
     Armor,
     Boots,
-    Weapon,
+    Weapon, // primary weapon
+    Weapon2, // secondary weapon
     Accessory
 }
 
@@ -20,8 +21,17 @@ public class Equipment : ScriptableObject
     public StatCollection stats = new StatCollection();
     public int levelRequirement = 1;
     public string ID;
+    public GameObject playerProjectile = null; // used if primary/secondary weapon
     public List<StatValue> GetAllStats()
     {
         return new List<StatValue>(stats.Stats);
+    }
+    public float GetManaCost()
+    {
+        return stats.GetStat("ManaCost");
+    }
+    public GameObject GetPlayerProjectile()
+    {
+        return playerProjectile;
     }
 }

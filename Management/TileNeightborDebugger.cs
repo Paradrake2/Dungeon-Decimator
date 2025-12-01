@@ -18,7 +18,7 @@ public class TileNeightborDebugger : MonoBehaviour
         Vector3 world = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector3Int cell = tilemap.WorldToCell(world);
 
-        Debug.Log($"Checking neighbors at cell {cell}");
+        // Debug.Log($"Checking neighbors at cell {cell}");
 
         LogNeighbor("Up",    cell + new Vector3Int(0, 1, 0));
         LogNeighbor("Down",  cell + new Vector3Int(0,-1, 0));
@@ -29,7 +29,7 @@ public class TileNeightborDebugger : MonoBehaviour
     void LogNeighbor(string label, Vector3Int pos)
     {
         TileBase t = tilemap.GetTile(pos);
-        Debug.Log($"{label}: {(t ? t.name : "NULL")}");
+        // Debug.Log($"{label}: {(t ? t.name : "NULL")}");
     }
     void Update()
     {

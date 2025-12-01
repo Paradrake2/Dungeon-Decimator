@@ -9,6 +9,7 @@ public class PlayerProjectile : MonoBehaviour
     [SerializeField] private float lifetime;
     [SerializeField] private float size = 1;
     [SerializeField] private List<AttributeDamage> damageAttributes;
+    private float damageMult = 1f;
     void Start()
     {
         
@@ -18,6 +19,8 @@ public class PlayerProjectile : MonoBehaviour
         transform.up = direction;
         speed = projectileData.speed;
         damage = projectileData.damage + stats.GetStatValue("Damage");
+        damageMult = Mathf.Max(1f, stats.GetStatValue("EquipmentDamageMultiplier"));
+        Debug.Log(damageMult);
         lifetime = projectileData.lifetime;
         size = projectileData.size * modifiers.GetProjSizeModifier();
         transform.localScale = Vector3.one * size;
@@ -39,7 +42,6 @@ public class PlayerProjectile : MonoBehaviour
 
     void SetDamageAttributes(PlayerStats stats)
     {
-        // Add or combine fire attribute damage
         AddOrCombineAttribute("FireAttributeDamage", stats.GetStatValue("FireAttributeDamage"), stats);
         AddOrCombineAttribute("WaterAttributeDamage", stats.GetStatValue("WaterAttributeDamage"), stats);
         AddOrCombineAttribute("WindAttributeDamage", stats.GetStatValue("WindAttributeDamage"), stats);
@@ -88,7 +90,7 @@ public class PlayerProjectile : MonoBehaviour
                 Debug.Log("Enemy hit for " + damage + " damage!");
             }
             Destroy(gameObject);
-        } else if (other.tag == "Obstacle")
+        } else if (other.gameObject.layer == LayerMask.NameToLayer("Obstacle"))
         {
             Destroy(gameObject);
         }
@@ -182,6 +184,6 @@ public class PlayerProjectile : MonoBehaviour
                 damageAfterMult = 0;
             }
         }
-        return finalDamage;
+        return finalDamage * damageMult;
     }
 }

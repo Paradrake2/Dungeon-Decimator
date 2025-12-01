@@ -14,6 +14,7 @@ public class EquipmentIngredient
 public class EquipmentRecipe : BaseRecipe
 {
     public EquipmentIngredient[] ingredients;
+    public GameObject projectileGameObject = null;
     public Equipment baseEquipment;
     public float tier;
     public float statMultiplier = 0.5f;
@@ -66,6 +67,10 @@ public class EquipmentRecipe : BaseRecipe
                 }
             }
             ID += material.Key.GetID();
+        }
+        if (projectileGameObject != null)
+        {
+            resultEquipment.playerProjectile = projectileGameObject;
         }
         EquipmentManager.Instance.AddToInventory(resultEquipment);
         EquipmentManager.Instance.EquipItem(resultEquipment);

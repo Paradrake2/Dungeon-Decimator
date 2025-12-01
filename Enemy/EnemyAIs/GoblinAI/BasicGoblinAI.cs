@@ -1,13 +1,11 @@
 using System.Collections;
 using UnityEngine;
 
-public class BasicSpiderAI : EnemyAI
+public class BasicGoblinAI : EnemyAI
 {
     public GameObject attackPrefab;
     public float windupTime = 0.3f;
     public float cooldownTime = 1f;
-    [Header("Attack Prefab Settings")]
-
     private Vector3 lockedAttackDirection;
     public override IEnumerator Attack()
     {
@@ -23,7 +21,6 @@ public class BasicSpiderAI : EnemyAI
         animator.SetBool("isAttacking", false);
         isAttacking = false;
     }
-
     void HandleAttack()
     {
         EnemyProjectileData data = attackPrefab.GetComponent<EnemyProjectile>().projectileData;

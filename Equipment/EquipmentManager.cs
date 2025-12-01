@@ -10,9 +10,15 @@ public class EquipmentManager : MonoBehaviour
     public Equipment armor;
     public Equipment boots;
     public Equipment weapon;
+    public Equipment weapon2;
     public Equipment[] accessories = new Equipment[4];
 
     public PlayerStats playerStats;
+
+    [Header("Cached Equipment Stats")]
+    public StatCollection cachedEquipmentStats;
+
+    public System.Action OnEquipmentChanged;
     private void Awake()
     {
         if (Instance == null)
@@ -33,35 +39,58 @@ public class EquipmentManager : MonoBehaviour
             playerStats = FindFirstObjectByType<PlayerStats>();
         }
     }
-
+    public void UpdateCachedStats()
+    {
+        cachedEquipmentStats = CalculateEquipmentStats();
+    }
+    public StatCollection GetEquipmentStats()
+    {
+        return cachedEquipmentStats;
+    }
     public bool EquipItem(Equipment equipment)
     {
+        bool equipSucceeded = false;
         switch (equipment.equipmentType)
         {
             case EquipmentType.Helmet:
                 helmet = equipment;
-                equippedItems.Add(equipment);
-                equipmentInventory.Remove(equipment);
+
+                equipSucceeded = true;
                 break;
             case EquipmentType.Armor:
                 armor = equipment;
                 equippedItems.Add(equipment);
                 equipmentInventory.Remove(equipment);
+                equipSucceeded = true;
                 break;
             case EquipmentType.Boots:
                 boots = equipment;
                 equippedItems.Add(equipment);
                 equipmentInventory.Remove(equipment);
+                equipSucceeded = true;
                 break;
             case EquipmentType.Weapon:
                 weapon = equipment;
                 equippedItems.Add(equipment);
                 equipmentInventory.Remove(equipment);
+                equipSucceeded = true;
+                break;
+            case EquipmentType.Weapon2:
+                weapon2 = equipment;
+                equippedItems.Add(equipment);
+                equipmentInventory.Remove(equipment);
+                equipSucceeded = true;
                 break;
             case EquipmentType.Accessory:
-                return EquipAccessory(equipment);
+                equipSucceeded =  EquipAccessory(equipment);
+                break;
             default:
                 return false;
+        }
+        if (equipSucceeded)
+        {
+            UpdateCachedStats();
+            OnEquipmentChanged?.Invoke();
         }
         return true;
     }
@@ -89,36 +118,33 @@ public class EquipmentManager : MonoBehaviour
             case EquipmentType.Helmet:
                 removedEquipment = helmet;
                 helmet = null;
-                equippedItems.Remove(removedEquipment);
-                equipmentInventory.Add(removedEquipment);
                 break;
             case EquipmentType.Armor:
                 removedEquipment = armor;
                 armor = null;
-                equippedItems.Remove(removedEquipment);
-                equipmentInventory.Add(removedEquipment);
                 break;
             case EquipmentType.Boots:
                 removedEquipment = boots;
                 boots = null;
-                equippedItems.Remove(removedEquipment);
-                equipmentInventory.Add(removedEquipment);
                 break;
             case EquipmentType.Weapon:
                 removedEquipment = weapon;
                 weapon = null;
-                equippedItems.Remove(removedEquipment);
-                equipmentInventory.Add(removedEquipment);
                 break;
             case EquipmentType.Accessory:
                 if (accessoryIndex >= 0 && accessoryIndex < accessories.Length)
                 {
                     removedEquipment = accessories[accessoryIndex];
                     accessories[accessoryIndex] = null;
-                    equippedItems.Remove(removedEquipment);
-                    equipmentInventory.Add(removedEquipment);
                 }
                 break;
+        }
+        if (removedEquipment != null)
+        {
+            equippedItems.Remove(removedEquipment);
+            equipmentInventory.Add(removedEquipment);
+            UpdateCachedStats();
+            OnEquipmentChanged?.Invoke();
         }
         return removedEquipment;
     }
