@@ -15,10 +15,10 @@ public class Combat : MonoBehaviour
     private Vector3 attackDirection;
     public GameObject projectilePrefab; // what the player shoots
     public GameObject playerSlash;
-    public Equipment primaryWeapon;
-    public Equipment secondaryWeapon;
-    public float secondaryAttackCooldown = 0.2f;
-    private float lastSecondaryAttackTime = 0f;
+    public Equipment selectedEquipment;
+    public bool canAttack = true;
+    public int selectedSlotIndex;
+    public Equipment basicEquipment; // fallback equipment if none selected
     void Start()
     {
         player = transform;
@@ -39,22 +39,41 @@ public class Combat : MonoBehaviour
         attackDirection = (mousePos - player.position).normalized;
         // direction will be used for aiming
     }
-
+    public void ChangeSelectedSlotIndex(int index)
+    {
+        selectedSlotIndex = index;
+        if (Hotbar.Instance != null)
+        {
+            Hotbar.Instance.selectedIndex = index;
+            selectedEquipment = Hotbar.Instance.GetHeldItem();
+        }
+    }
+    public void StartAttackRoutine()
+    {
+        StartCoroutine(AttackCoroutine());
+    }
     public IEnumerator AttackCoroutine()
     {
-        while (true)
+        while (canAttack)
         {
             if (Input.GetKeyDown(attackKey) && stats.canAttack)
             {
-                // Perform attack logic here
-                FireProjectile();
-                // Wait for the cooldown duration before allowing the next attack
-                yield return new WaitForSeconds(attackCooldown);
+                if (selectedEquipment != null)
+                {
+                    FireProjectile();
+                    // Wait for the cooldown duration before allowing the next attack
+                    yield return new WaitForSeconds(attackCooldown);
+                }
+                else
+                {
+                    yield return null; // No equipment selected, wait until the next frame
+                }
             }
             else
             {
                 yield return null; // Wait until the next frame
             }
+            /**
             if (Input.GetKeyDown(secondaryAttackKey) && secondaryAttackCooldown + lastSecondaryAttackTime <= Time.time)
             {
                 // Perform secondary attack logic here
@@ -63,18 +82,33 @@ public class Combat : MonoBehaviour
                 // Wait for the cooldown duration before allowing the next attack
                 yield return new WaitForSeconds(secondaryAttackCooldown);
             }
+            **/
         }
-    }
-    void SpawnSlash()
-    {
-        GameObject slash = Instantiate(playerSlash, player.position, Quaternion.identity);
-        PlayerSlash slashScript = slash.GetComponent<PlayerSlash>();
-        slashScript.Initialize(attackDirection, stats, playerModifiers);
     }
     void FireProjectile(Vector3 baseDirection = default, float angleOffset = 0f)
     {
+        selectedEquipment = Hotbar.Instance.GetHeldItem();
+        switch (selectedEquipment.equipmentType)
+        {
+            case EquipmentType.Melee:
+                // Melee attack logic (e.g., spawn a slash effect)
+                MeleeAttack();
+                break;
+            case EquipmentType.Ranged:
+                RangedAttack(baseDirection, angleOffset);
+                break;
+            default:
+                Debug.LogWarning("Selected equipment is neither Melee nor Ranged.");
+                return;
+        }
+        if (selectedEquipment.equipmentType == EquipmentType.Ranged)
+        {
+            
+        }
+    }
+    void RangedAttack(Vector3 baseDirection = default, float angleOffset = 0f)
+    {
         int quantity = playerModifiers.GetQuantity();
-        Vector3 rotatedDirection = Quaternion.Euler(0, 0, angleOffset) * (baseDirection == default ? attackDirection : baseDirection);
         if (quantity == 1)
         {
             // Single projectile - fire straight
@@ -88,7 +122,12 @@ public class Combat : MonoBehaviour
             FireProjectileCone(quantity);
         }
     }
-
+    void MeleeAttack()
+    {
+        GameObject slash = Instantiate(playerSlash, player.position, Quaternion.identity);
+        PlayerSlash slashScript = slash.GetComponent<PlayerSlash>();
+        slashScript.Initialize(attackDirection, stats, playerModifiers);
+    }
     void FireProjectileCone(int quantity)
     {
         float coneAngle = 30f; // Total spread angle in degrees (adjustable)

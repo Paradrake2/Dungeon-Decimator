@@ -7,8 +7,8 @@ public enum EquipmentType
     Helmet,
     Armor,
     Boots,
-    Weapon, // primary weapon
-    Weapon2, // secondary weapon
+    Ranged,
+    Melee,
     Accessory
 }
 

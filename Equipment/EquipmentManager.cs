@@ -10,7 +10,6 @@ public class EquipmentManager : MonoBehaviour
     public Equipment armor;
     public Equipment boots;
     public Equipment weapon;
-    public Equipment weapon2;
     public Equipment[] accessories = new Equipment[4];
 
     public PlayerStats playerStats;
@@ -47,6 +46,12 @@ public class EquipmentManager : MonoBehaviour
     {
         return cachedEquipmentStats;
     }
+    public void SetWeapon(Equipment weaponEquipment)
+    {
+        weapon = weaponEquipment;
+        UpdateCachedStats();
+        OnEquipmentChanged?.Invoke();
+    }
     public bool EquipItem(Equipment equipment)
     {
         bool equipSucceeded = false;
@@ -54,7 +59,6 @@ public class EquipmentManager : MonoBehaviour
         {
             case EquipmentType.Helmet:
                 helmet = equipment;
-
                 equipSucceeded = true;
                 break;
             case EquipmentType.Armor:
@@ -69,18 +73,19 @@ public class EquipmentManager : MonoBehaviour
                 equipmentInventory.Remove(equipment);
                 equipSucceeded = true;
                 break;
-            case EquipmentType.Weapon:
+            case EquipmentType.Ranged:
                 weapon = equipment;
                 equippedItems.Add(equipment);
                 equipmentInventory.Remove(equipment);
                 equipSucceeded = true;
                 break;
-            case EquipmentType.Weapon2:
-                weapon2 = equipment;
+            case EquipmentType.Melee:
+                weapon = equipment;
                 equippedItems.Add(equipment);
                 equipmentInventory.Remove(equipment);
                 equipSucceeded = true;
                 break;
+                
             case EquipmentType.Accessory:
                 equipSucceeded =  EquipAccessory(equipment);
                 break;
@@ -127,7 +132,11 @@ public class EquipmentManager : MonoBehaviour
                 removedEquipment = boots;
                 boots = null;
                 break;
-            case EquipmentType.Weapon:
+            case EquipmentType.Ranged:
+                removedEquipment = weapon;
+                weapon = null;
+                break;
+            case EquipmentType.Melee:
                 removedEquipment = weapon;
                 weapon = null;
                 break;
